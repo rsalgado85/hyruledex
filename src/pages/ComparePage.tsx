@@ -1,20 +1,20 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Swords, X, Plus, Search } from 'lucide-react';
-import { useAllPokemon } from '@/hooks/usePokemon';
+import { useAllCharacters } from '@/hooks/useCharacters';
 import { capitalize } from '@/utils/pokemonUtils';
 import { ChartSkeleton } from '@/components/common/Skeleton';
 import { BaseStatsRadarChart } from '@/components/charts/BaseStatsRadarChart';
 import { useAppStore } from '@/store/useAppStore';
 import { t } from '@/constants/translations';
 import { getTypeIcon } from '@/constants/typeIcons';
-import { GenerationBadge } from '@/components/common/GenerationBadge';
+import { EraBadge } from '@/components/common/EraBadge';
 import type { PokemonWithStats } from '@/types/pokemon';
 
 const MAX_COMPARE = 4;
 
 export function ComparePage() {
-  const { data: pokemonList, isLoading } = useAllPokemon();
+  const { data: pokemonList, isLoading } = useAllCharacters();
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSelector, setShowSelector] = useState(false);
@@ -113,7 +113,7 @@ export function ComparePage() {
                       );
                     })}
                   </div>
-                  <GenerationBadge pokemonId={pokemon.id} size="sm" />
+                  <EraBadge pokemonId={pokemon.id} size="sm" />
                 </>
               ) : (
                 <button
@@ -201,7 +201,7 @@ export function ComparePage() {
               </thead>
               <tbody>
                 {['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed'].map((stat) => {
-                  const statLabel = stat === 'special-attack' ? 'Sp. Atk' : stat === 'special-defense' ? 'Sp. Def' : capitalize(stat);
+                  const statLabel = stat === 'hp' ? 'Hearts' : stat === 'attack' ? 'Strength' : stat === 'special-attack' ? 'Wisdom' : stat === 'special-defense' ? 'Spirit' : capitalize(stat);
                   return (
                     <tr key={stat} className="border-b border-dark-border/50">
                       <td className="py-2 sm:py-3 text-text-secondary">{statLabel}</td>

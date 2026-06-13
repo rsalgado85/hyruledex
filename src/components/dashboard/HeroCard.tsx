@@ -1,20 +1,21 @@
 /**
  * Hero Card - Main dashboard hero section
  * 
- * Premium gaming-style hero card featuring a featured Pokémon
- * with dynamic type-based glow effects, circular power score,
+ * Premium gaming-style hero card featuring a featured character
+ * with dynamic race-based glow effects, circular power score,
  * and detailed stat display.
  * 
- * Inspired by: Valorant Tracker, Pokémon Home, Nintendo Switch UI
+ * Inspired by: Zelda UI, Nintendo Switch, Hyrule Compendium
  */
 
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
-import { useAllPokemon } from '@/hooks/usePokemon';
+import { useAllCharacters } from '@/hooks/useCharacters';
 import { capitalize, formatPokemonId } from '@/utils/pokemonUtils';
-import { TYPE_COLORS } from '@/constants';
+import { RACE_COLORS } from '@/constants';
 import { Swords, Shield, Zap, Heart, Brain, Eye } from 'lucide-react';
-import { GenerationBadge } from '@/components/common/GenerationBadge';
+import { EraBadge } from '@/components/common/EraBadge';
+import { ImageWithFallback } from '@/components/common/ImageWithFallback';
 import { useAppStore } from '@/store/useAppStore';
 import { t } from '@/constants/translations';
 
@@ -32,52 +33,43 @@ const STAT_ICONS: Record<string, React.ComponentType<{ size?: number; className?
 };
 
 const STAT_LABELS: Record<string, string> = {
-  hp: 'HP',
-  attack: 'Attack',
+  hp: 'Hearts',
+  attack: 'Strength',
   defense: 'Defense',
-  'special-attack': 'Sp. Atk',
-  'special-defense': 'Sp. Def',
+  'special-attack': 'Wisdom',
+  'special-defense': 'Spirit',
   speed: 'Speed',
 };
 
 export function HeroCard({ pokemonId }: HeroCardProps) {
-  const { data: allPokemon } = useAllPokemon();
+  const { data: allCharacters } = useAllCharacters();
   const { theme, language } = useAppStore();
   const isDark = theme === 'dark';
 
-  const featuredPokemon = useMemo(() => {
-    if (!allPokemon || allPokemon.length === 0) return null;
+  const featuredCharacter = useMemo(() => {
+    if (!allCharacters || allCharacters.length === 0) return null;
 
     if (pokemonId) {
-      // Use explicitly provided Pokémon ID
-      return allPokemon.find((p) => p.id === pokemonId) || allPokemon[0];
+      return allCharacters.find((p) => p.id === pokemonId) || allCharacters[0];
     }
 
-    // Dynamic selection: pick the Pokémon with the highest total stats
-    // that is NOT a mythical/legendary (to keep it relatable)
-    // This ensures the featured Pokémon changes as more data loads
-    // and always showcases an impressive but recognizable Pokémon
-    const sorted = [...allPokemon].sort((a, b) => {
-      // Prefer Pokémon with higher total stats
+    // Dynamic selection: pick characters with highest total stats
+    // Rotates daily for variety
+    const sorted = [...allCharacters].sort((a, b) => {
       const statDiff = (b.totalStats || 0) - (a.totalStats || 0);
       if (statDiff !== 0) return statDiff;
-      // Tiebreaker: prefer lower ID (more iconic Pokémon)
       return a.id - b.id;
     });
 
-    // Return the top non-legendary/mythical candidate
-    // Top 5 by total stats typically are: Mewtwo, Groudon, Kyogre, Rayquaza, etc.
-    // We pick from the top 10 to add variety
     const topCandidates = sorted.slice(0, 10);
-    // Use the current date to rotate the featured Pokémon daily
     const dayOfYear = Math.floor(
       (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000
     );
     const selectedIndex = dayOfYear % topCandidates.length;
     return topCandidates[selectedIndex];
-  }, [allPokemon, pokemonId]);
+  }, [allCharacters, pokemonId]);
 
-  if (!featuredPokemon) {
+  if (!featuredCharacter) {
     return (
       <div className="hero-card-skeleton">
         <div className="skeleton h-full w-full rounded-[32px]" />
@@ -85,15 +77,15 @@ export function HeroCard({ pokemonId }: HeroCardProps) {
     );
   }
 
-  const primaryType = featuredPokemon.dominantType;
-  const typeColor = TYPE_COLORS[primaryType] || '#6c5ce7';
-  const totalStats = featuredPokemon.totalStats;
-  const maxPossibleStats = 720; // Max possible total (Mewtwo level)
+  const primaryType = featuredCharacter.dominantType;
+  const typeColor = RACE_COLORS[primaryType] || '#6c5ce7';
+  const totalStats = featuredCharacter.totalStats;
+  const maxPossibleStats = 600; // Max possible total for Zelda characters
   const powerScore = Math.round((totalStats / maxPossibleStats) * 100);
   const powerScoreColor = powerScore >= 80 ? '#00b894' : powerScore >= 60 ? '#fdcb6e' : '#e17055';
 
   // Stats for the side panel
-  const stats = featuredPokemon.stats.map((s) => ({
+  const stats = featuredCharacter.stats.map((s) => ({
     name: s.stat.name,
     label: STAT_LABELS[s.stat.name] || s.stat.name,
     value: s.base_stat,
@@ -141,7 +133,7 @@ export function HeroCard({ pokemonId }: HeroCardProps) {
               <span className="text-xs font-semibold tracking-widest uppercase text-text-secondary">
                 {t('dashboard.featuredPokemon', language)}
               </span>
-              <GenerationBadge pokemonId={featuredPokemon.id} size="sm" />
+              <EraBadge pokemonId={featuredCharacter.id} size="sm" />
               <span
                 className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
                 style={{
@@ -159,7 +151,7 @@ export function HeroCard({ pokemonId }: HeroCardProps) {
               transition={{ delay: 0.3 }}
               className="text-4xl md:text-5xl font-black tracking-tight mb-1"
             >
-              {capitalize(featuredPokemon.name)}
+              {capitalize(featuredCharacter.name)}
             </motion.h2>
 
             <motion.p
@@ -168,7 +160,7 @@ export function HeroCard({ pokemonId }: HeroCardProps) {
               transition={{ delay: 0.35 }}
               className="text-sm text-text-secondary font-mono"
             >
-              {formatPokemonId(featuredPokemon.id)}
+              {formatPokemonId(featuredCharacter.id)}
             </motion.p>
           </div>
 
@@ -224,13 +216,13 @@ export function HeroCard({ pokemonId }: HeroCardProps) {
               <div className="flex items-center gap-2">
                 <span className="text-xs text-text-secondary font-medium">{t('dashboard.height', language)}</span>
                 <span className="text-sm font-semibold text-text-primary">
-                  {(featuredPokemon.height / 10).toFixed(1)} {t('common.m', language)}
+                  {(featuredCharacter.height / 10).toFixed(1)} {t('common.m', language)}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-text-secondary font-medium">{t('dashboard.weight', language)}</span>
                 <span className="text-sm font-semibold text-text-primary">
-                  {(featuredPokemon.weight / 10).toFixed(1)} {t('common.kg', language)}
+                  {(featuredCharacter.weight / 10).toFixed(1)} {t('common.kg', language)}
                 </span>
               </div>
             </div>
@@ -245,7 +237,7 @@ export function HeroCard({ pokemonId }: HeroCardProps) {
           >
             {stats.slice(0, 6).map((stat, i) => {
               const StatIcon = stat.icon;
-              const statColor = TYPE_COLORS[stat.name] || '#6c5ce7';
+              const statColor = RACE_COLORS[stat.name] || '#6c5ce7';
               return (
                 <motion.div
                   key={stat.name}
@@ -288,10 +280,7 @@ export function HeroCard({ pokemonId }: HeroCardProps) {
             transition={{ delay: 0.3, duration: 0.8, type: 'spring', stiffness: 60 }}
             className="relative z-10"
           >
-            <motion.img
-              src={featuredPokemon.artworkUrl}
-              alt={featuredPokemon.name}
-              className="w-[320px] h-[320px] md:w-[420px] md:h-[420px] object-contain drop-shadow-2xl"
+            <motion.div
               animate={{
                 y: [0, -8, 0],
               }}
@@ -300,13 +289,21 @@ export function HeroCard({ pokemonId }: HeroCardProps) {
                 repeat: Infinity,
                 ease: 'easeInOut',
               }}
-              loading="eager"
-            />
+            >
+              <ImageWithFallback
+                characterName={featuredCharacter.name}
+                characterId={featuredCharacter.id}
+                src={featuredCharacter.artworkUrl}
+                alt={featuredCharacter.name}
+                className="w-[320px] h-[320px] md:w-[420px] md:h-[420px] object-contain drop-shadow-2xl"
+                loading="eager"
+              />
+            </motion.div>
           </motion.div>
 
           {/* Type badges floating */}
           <div className="absolute bottom-6 left-6 flex gap-2">
-            {featuredPokemon.types.map((t, i) => (
+            {featuredCharacter.types.map((t, i) => (
               <motion.span
                 key={t.type.name}
                 initial={{ opacity: 0, x: -10 }}
@@ -314,9 +311,9 @@ export function HeroCard({ pokemonId }: HeroCardProps) {
                 transition={{ delay: 0.8 + i * 0.1 }}
                 className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md"
                 style={{
-                  backgroundColor: `${TYPE_COLORS[t.type.name] || '#6c5ce7'}33`,
-                  color: TYPE_COLORS[t.type.name] || '#6c5ce7',
-                  border: `1px solid ${TYPE_COLORS[t.type.name] || '#6c5ce7'}44`,
+                  backgroundColor: `${RACE_COLORS[t.type.name] || '#6c5ce7'}33`,
+                  color: RACE_COLORS[t.type.name] || '#6c5ce7',
+                  border: `1px solid ${RACE_COLORS[t.type.name] || '#6c5ce7'}44`,
                 }}
               >
                 {t.type.name}

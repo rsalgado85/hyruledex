@@ -52,7 +52,7 @@ export function Sidebar() {
 
   const isDark = theme === 'dark';
 
-  const sidebarBg = isDark ? '#0b1220' : '#ffffff';
+  const sidebarBg = isDark ? '#0F1416' : '#ffffff';
   const borderColor = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.06)';
   const textMuted = isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.35)';
   const textHover = isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)';
@@ -89,11 +89,11 @@ export function Sidebar() {
                 <img src="/logo.svg" alt="DASHDEX" className="w-full h-full object-contain" />
               </div>
               <div>
-                <h1 className="text-lg font-black tracking-tight" style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>
-                  DASH<span className="text-[#ff4d6d]">DEX</span>
+                <h1 className="text-lg font-black tracking-tight" style={{ color: isDark ? '#ffffff' : '#2C2416' }}>
+                  HYRULE<span className="text-[#C6A15B]">DEX</span>
                 </h1>
                 <p className="text-[10px] font-medium tracking-wider uppercase" style={{ color: logoSubtext }}>
-                  Pokédex Analytics
+                  Enciclopedia de Zelda
                 </p>
               </div>
             </motion.div>
@@ -105,8 +105,8 @@ export function Sidebar() {
               exit={{ opacity: 0, scale: 0.8 }}
               className="w-full flex justify-center"
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ff4d6d] to-[#d946ef] flex items-center justify-center shadow-lg shadow-[#ff4d6d]/20 p-1.5">
-                <img src="/logo.svg" alt="DASHDEX" className="w-full h-full object-contain" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#C6A15B] to-[#3E6B48] flex items-center justify-center shadow-lg shadow-[#C6A15B]/20 p-1.5">
+                <img src="/logo.svg" alt="HYRULEDEX" className="w-full h-full object-contain" />
               </div>
             </motion.div>
           )}
@@ -127,10 +127,10 @@ export function Sidebar() {
               style={({ isActive }) =>
                 isActive
                   ? {
-                      background: 'linear-gradient(90deg, #ff4d6d, #d946ef)',
+                      background: 'linear-gradient(90deg, #C6A15B, #3E6B48)',
                       boxShadow: isDark
-                        ? '0 0 20px rgba(255,77,109,0.3), 0 0 40px rgba(217,70,239,0.15)'
-                        : '0 0 12px rgba(255,77,109,0.2)',
+                        ? '0 0 20px rgba(198,161,91,0.3), 0 0 40px rgba(62,107,72,0.15)'
+                        : '0 0 12px rgba(198,161,91,0.2)',
                       color: '#ffffff',
                       fontWeight: 600,
                     }

@@ -3,14 +3,16 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import { motion } from 'framer-motion';
 import { ArrowLeft, Heart, Swords, Shield, Eye, Brain, Gauge, ArrowRight } from 'lucide-react';
-import { useEnrichedPokemon, usePokemonSpecies, useEvolutionChain, useAllPokemon } from '@/hooks/usePokemon';
+import { useEnrichedCharacter, useCharacterSpecies, useTimelineChain, useAllCharacters } from '@/hooks/useCharacters';
 import { useAppStore } from '@/store/useAppStore';
 import { capitalize, formatPokemonId, getStatColor } from '@/utils/pokemonUtils';
+import { ImageWithFallback } from '@/components/common/ImageWithFallback';
 import { ChartSkeleton } from '@/components/common/Skeleton';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell } from 'recharts';
 import { getTypeIcon } from '@/constants/typeIcons';
-import { GenerationBadge } from '@/components/common/GenerationBadge';
+import { EraBadge } from '@/components/common/EraBadge';
 import { t } from '@/constants/translations';
+import { getAttributeLabel } from '@/services/translators';
 import type { EvolutionNode } from '@/types/pokemon';
 
 const STAT_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
@@ -22,6 +24,16 @@ const STAT_ICONS: Record<string, React.ComponentType<{ size?: number; className?
   speed: Gauge,
 };
 
+// Map Pokémon stat names to Hyrule attribute labels for display
+const STAT_TO_ATTR_LABEL: Record<string, string> = {
+  hp: 'Hearts',
+  attack: 'Strength',
+  defense: 'Defense',
+  'special-attack': 'Wisdom',
+  'special-defense': 'Spirit',
+  speed: 'Speed',
+};
+
 // Flatten evolution chain into a list of species names
 function flattenEvolutionChain(node: EvolutionNode): string[] {
   const names: string[] = [node.species.name];
@@ -31,12 +43,12 @@ function flattenEvolutionChain(node: EvolutionNode): string[] {
   return names;
 }
 
-export function PokemonDetailPage() {
+export function CharacterDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: pokemon, isLoading } = useEnrichedPokemon(id ?? '');
-  const { data: species } = usePokemonSpecies(pokemon?.id ?? 0);
-  const { data: allPokemon } = useAllPokemon();
+  const { data: pokemon, isLoading } = useEnrichedCharacter(id ?? '');
+  const { data: species } = useCharacterSpecies(pokemon?.id ?? 0);
+  const { data: allPokemon } = useAllCharacters();
   const { addFavorite, removeFavorite, isFavorite, addToHistory, language } = useAppStore();
 
   // Extract evolution chain ID from species URL
@@ -46,7 +58,7 @@ export function PokemonDetailPage() {
     return Number(parts[parts.length - 2]) || null;
   }, [species]);
 
-  const { data: evolutionChain } = useEvolutionChain(evolutionChainId ?? 0);
+  const { data: evolutionChain } = useTimelineChain(evolutionChainId ?? 0);
 
   // Build evolution chain with images
   const evolutionData = useMemo(() => {
@@ -91,12 +103,12 @@ export function PokemonDetailPage() {
   );
 
   const statChartData = useMemo(() => pokemon ? [
-    { name: 'HP', value: pokemon.computedStats.hp, color: '#00b894' },
-    { name: 'Attack', value: pokemon.computedStats.attack, color: '#e17055' },
-    { name: 'Defense', value: pokemon.computedStats.defense, color: '#74b9ff' },
-    { name: 'Sp. Atk', value: pokemon.computedStats.specialAttack, color: '#a29bfe' },
-    { name: 'Sp. Def', value: pokemon.computedStats.specialDefense, color: '#6c5ce7' },
-    { name: 'Speed', value: pokemon.computedStats.speed, color: '#fdcb6e' },
+    { name: 'Hearts', value: pokemon.computedStats.hp, color: '#3E6B48' },
+    { name: 'Strength', value: pokemon.computedStats.attack, color: '#8B3A3A' },
+    { name: 'Defense', value: pokemon.computedStats.defense, color: '#5B8A9E' },
+    { name: 'Wisdom', value: pokemon.computedStats.specialAttack, color: '#C6A15B' },
+    { name: 'Spirit', value: pokemon.computedStats.specialDefense, color: '#E8D8B0' },
+    { name: 'Speed', value: pokemon.computedStats.speed, color: '#8B7E6A' },
   ] : [], [pokemon]);
 
   if (isLoading || !pokemon) {
@@ -131,16 +143,21 @@ export function PokemonDetailPage() {
         <div className="relative z-10 flex flex-col lg:flex-row items-center gap-8">
           {/* Image */}
           <div className="flex-shrink-0">
-            <motion.img
-              src={pokemon.artworkUrl}
-              alt={pokemon.name}
-              className="w-48 h-48 lg:w-64 lg:h-64 object-contain drop-shadow-2xl"
+            <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5 }}
-              loading="eager"
-              fetchPriority="high"
-            />
+            >
+              <ImageWithFallback
+                characterName={pokemon.name}
+                characterId={pokemon.id}
+                src={pokemon.artworkUrl}
+                alt={pokemon.name}
+                className="w-48 h-48 lg:w-64 lg:h-64 object-contain drop-shadow-2xl"
+                loading="eager"
+                fetchPriority="high"
+              />
+            </motion.div>
           </div>
 
           {/* Info */}
@@ -152,7 +169,7 @@ export function PokemonDetailPage() {
                   <h1 className="text-3xl lg:text-4xl font-bold gradient-text">
                     {capitalize(pokemon.name)}
                   </h1>
-                  <GenerationBadge pokemonId={pokemon.id} size="md" />
+                  <EraBadge pokemonId={pokemon.id} size="md" />
                 </div>
                 {genus && (
                   <p className="text-text-secondary text-sm mt-1">{genus}</p>
@@ -171,7 +188,7 @@ export function PokemonDetailPage() {
               </button>
             </div>
 
-            {/* Types with icons */}
+            {/* Races (formerly Types) with icons */}
             <div className="flex gap-2 justify-center lg:justify-start mb-4">
               {pokemon.types.map((t) => {
                 const TypeIcon = getTypeIcon(t.type.name);
@@ -222,13 +239,13 @@ export function PokemonDetailPage() {
           transition={{ delay: 0.15 }}
           className="glass-card p-6"
         >
-          <h2 className="text-lg font-semibold mb-6">{t('detail.evolutionChain', language)}</h2>
+          <h2 className="text-lg font-semibold mb-6">{t('detail.timeline', language)}</h2>
           <div className="flex items-center justify-center gap-4 flex-wrap">
             {evolutionData.map((evo, index) => (
               <div key={evo.id} className="flex items-center gap-4">
                 {/* Evolution card */}
                 <button
-                  onClick={() => navigate(`/pokemon/${evo.id}`)}
+                  onClick={() => navigate(`/character/${evo.id}`)}
                   className={`flex flex-col items-center gap-1.5 p-4 rounded-xl transition-all hover:scale-105 min-w-[130px] ${
                     evo.id === pokemon.id
                       ? 'bg-accent/15 border border-accent/30 ring-1 ring-accent/20'
@@ -249,7 +266,7 @@ export function PokemonDetailPage() {
                   <span className="text-[10px] text-text-secondary">
                     #{String(evo.id).padStart(3, '0')}
                   </span>
-                  <GenerationBadge pokemonId={evo.id} size="sm" />
+                  <EraBadge pokemonId={evo.id} size="sm" />
                   <div className="flex gap-1">
                     {evo.types.map((t) => {
                       const TypeIcon = getTypeIcon(t.type.name);
@@ -301,18 +318,19 @@ export function PokemonDetailPage() {
             </BarChart>
           </ResponsiveContainer>
 
-          {/* Stat Details */}
+          {/* Attribute Details (formerly Stats) */}
           <div className="space-y-3">
             {pokemon.stats.map((stat) => {
               const Icon = STAT_ICONS[stat.stat.name] || Gauge;
               const percentage = (stat.base_stat / 255) * 100;
+              const attrLabel = STAT_TO_ATTR_LABEL[stat.stat.name] || capitalize(stat.stat.name.replace('-', ' '));
               return (
                 <div key={stat.stat.name}>
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
                       <Icon size={14} className="text-text-secondary" />
                       <span className="text-sm text-text-secondary">
-                        {capitalize(stat.stat.name.replace('-', ' '))}
+                        {attrLabel}
                       </span>
                     </div>
                     <span className="text-sm font-bold gradient-text">{stat.base_stat}</span>
@@ -346,7 +364,7 @@ export function PokemonDetailPage() {
         transition={{ delay: 0.3 }}
         className="glass-card p-6"
       >
-        <h2 className="text-lg font-semibold mb-4">{t('detail.abilities', language)}</h2>
+        <h2 className="text-lg font-semibold mb-4">{t('detail.skills', language)}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {pokemon.abilities.map((ability) => (
             <div key={ability.ability.name} className="p-4 rounded-xl bg-glass">

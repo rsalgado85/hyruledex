@@ -14,8 +14,7 @@
 
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAllGenerations } from '@/hooks/useGenerations';
-import { TYPE_COLORS } from '@/constants';
+import { useAllEras } from '@/hooks/useEras';
 import type { FilterState } from '@/hooks/useFilters';
 
 interface AdvancedFiltersProps {
@@ -39,7 +38,7 @@ export function AdvancedFilters({
   filterOptions,
 }: AdvancedFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { data: generations } = useAllGenerations();
+  const { data: generations } = useAllEras();
 
   const toggleExpanded = useCallback(() => {
     setIsExpanded((prev) => !prev);

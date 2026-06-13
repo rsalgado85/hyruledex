@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { useAllPokemon } from '@/hooks/usePokemon';
+import { useAllCharacters } from '@/hooks/useCharacters';
 import { ChartSkeleton } from '@/components/common/Skeleton';
 import { useAppStore } from '@/store/useAppStore';
 import { t } from '@/constants/translations';
-import { TYPE_COLORS } from '@/constants';
+import { RACE_COLORS } from '@/constants';
 import { capitalize } from '@/utils/pokemonUtils';
 import { Swords, Shield, Zap, Heart, Brain, Eye, TrendingUp, TrendingDown } from 'lucide-react';
 
@@ -18,7 +18,7 @@ const STAT_ICONS: Record<string, React.ComponentType<{ size?: number; className?
 };
 
 export function InsightsPage() {
-  const { data: pokemonList, isLoading } = useAllPokemon();
+  const { data: pokemonList, isLoading } = useAllCharacters();
   const { language } = useAppStore();
 
   const insights = useMemo(() => {
@@ -222,7 +222,7 @@ export function InsightsPage() {
           <div className="flex items-center gap-2">
             <div
               className="w-3 h-3 sm:w-4 sm:h-4 rounded-full flex-shrink-0"
-              style={{ backgroundColor: TYPE_COLORS[insights.strongestType.name] || '#666' }}
+              style={{ backgroundColor: RACE_COLORS[insights.strongestType.name] || '#666' }}
             />
             <div className="min-w-0">
               <p className="text-xs sm:text-sm font-semibold capitalize truncate">{insights.strongestType.name}</p>
@@ -246,12 +246,12 @@ export function InsightsPage() {
           <div className="flex items-center gap-2">
             <div
               className="w-3 h-3 sm:w-4 sm:h-4 rounded-full flex-shrink-0"
-              style={{ backgroundColor: TYPE_COLORS[insights.mostCommonType[0]] || '#666' }}
+              style={{ backgroundColor: RACE_COLORS[insights.mostCommonType[0]] || '#666' }}
             />
             <div className="min-w-0">
               <p className="text-xs sm:text-sm font-semibold capitalize truncate">{insights.mostCommonType[0]}</p>
               <p className="text-[10px] sm:text-xs text-text-secondary">
-                {insights.mostCommonType[1]} {t('common.pokemon', language)} ({Math.round((insights.mostCommonType[1] / insights.totalPokemon) * 100)}%)
+                {insights.mostCommonType[1]} {t('common.characters', language)} ({Math.round((insights.mostCommonType[1] / insights.totalPokemon) * 100)}%)
               </p>
             </div>
           </div>

@@ -1,25 +1,25 @@
 /**
- * Evolution Tree Component
+ * Timeline Tree Component
  * 
- * Visual component that renders a Pokémon's evolution chain as an interactive tree.
+ * Visual component that renders a character's evolution chain as an interactive tree.
  * Supports:
- * - Linear evolutions (Bulbasaur -> Ivysaur -> Venusaur)
- * - Branching evolutions (Eevee -> multiple forms)
+ * - Linear progressions
+ * - Branching progressions
  * - Evolution details (level, item, trade, etc.)
- * - Click to navigate to Pokémon detail
+ * - Click to navigate to character detail
  */
 
 import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useEvolutionChainBySpecies } from '@/hooks/useEvolution';
-import { TYPE_COLORS } from '@/constants';
+import { useTimelineChainBySpecies } from '@/hooks/useTimelines';
+import { RACE_COLORS } from '@/constants';
 import type { EvolutionNode } from '@/services/evolution.service';
 
-interface EvolutionTreeProps {
+interface TimelineTreeProps {
   speciesId: number;
-  pokemonImages: Map<string, string>;
-  pokemonTypes: Map<string, { type: { name: string } }[]>;
+  characterImages: Map<string, string>;
+  characterTypes: Map<string, { type: { name: string } }[]>;
 }
 
 function EvolutionNodeCard({
@@ -77,7 +77,7 @@ function EvolutionNodeCard({
               <span
                 key={t.type.name}
                 className="evolution-type-badge"
-                style={{ backgroundColor: TYPE_COLORS[t.type.name] || '#666' }}
+                style={{ backgroundColor: RACE_COLORS[t.type.name] || '#666' }}
               >
                 {t.type.name}
               </span>
@@ -136,12 +136,12 @@ function EvolutionNodeCard({
   );
 }
 
-export function EvolutionTree({ speciesId, pokemonImages, pokemonTypes }: EvolutionTreeProps) {
+export function TimelineTree({ speciesId, characterImages, characterTypes }: TimelineTreeProps) {
   const navigate = useNavigate();
-  const { data: chain, isLoading, error } = useEvolutionChainBySpecies(speciesId);
+  const { data: chain, isLoading, error } = useTimelineChainBySpecies(speciesId);
 
   const handleNavigate = (id: number) => {
-    navigate(`/pokemon/${id}`);
+    navigate(`/character/${id}`);
   };
 
   if (isLoading) {
@@ -156,18 +156,18 @@ export function EvolutionTree({ speciesId, pokemonImages, pokemonTypes }: Evolut
   if (error || !chain) {
     return (
       <div className="evolution-error">
-        <p>No evolution data available</p>
+        <p>No timeline data available</p>
       </div>
     );
   }
 
   return (
-    <div className="evolution-tree" role="tree" aria-label="Pokémon evolution chain">
+    <div className="evolution-tree" role="tree" aria-label="Character timeline">
       <AnimatePresence>
         <EvolutionNodeCard
           node={chain.chain}
-          images={pokemonImages}
-          types={pokemonTypes}
+          images={characterImages}
+          types={characterTypes}
           onNavigate={handleNavigate}
         />
       </AnimatePresence>

@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import type { LucideIcon } from 'lucide-react';
-import { GenerationBadge } from '@/components/common/GenerationBadge';
+import { EraBadge } from '@/components/common/EraBadge';
 
 interface KPICardProps {
   label: string;
@@ -27,7 +27,7 @@ export function KPICard({ label, value, icon: Icon, subtitle, trend, trendValue,
     >
       <div className="flex items-center justify-between">
         <span className="kpi-label">{label}</span>
-        <div className="p-2 rounded-lg bg-accent/10 text-accent-light group-hover:bg-accent/20 transition-colors">
+        <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(198, 161, 91, 0.1)', color: '#E8D8B0' }}>
           <Icon size={18} />
         </div>
       </div>
@@ -42,7 +42,7 @@ export function KPICard({ label, value, icon: Icon, subtitle, trend, trendValue,
         )}
         <span className="kpi-value">{value}</span>
         {pokemonId && (
-          <GenerationBadge pokemonId={pokemonId} size="sm" />
+          <EraBadge pokemonId={pokemonId} size="sm" />
         )}
       </div>
       {subtitle && (

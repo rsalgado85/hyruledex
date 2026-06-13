@@ -2,52 +2,51 @@ import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, Filter, X } from 'lucide-react';
-import { useAllPokemon } from '@/hooks/usePokemon';
+import { useAllCharacters } from '@/hooks/useCharacters';
 import { capitalize } from '@/utils/pokemonUtils';
 import { ChartSkeleton } from '@/components/common/Skeleton';
 import { useAppStore } from '@/store/useAppStore';
 import { t } from '@/constants/translations';
 import { getTypeIcon } from '@/constants/typeIcons';
-import { GenerationBadge } from '@/components/common/GenerationBadge';
+import { EraBadge } from '@/components/common/EraBadge';
+import { getGenerationIdFromPokemonId } from '@/services/generation.service';
 import type { PokemonWithStats } from '@/types/pokemon';
 
 const ITEMS_PER_PAGE = 20;
 
-const POKEMON_TYPES = [
-  'normal', 'fire', 'water', 'electric', 'grass', 'ice',
-  'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug',
-  'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy',
+const ZELDA_RACES = [
+  'hylian', 'gerudo', 'zora', 'goron', 'rito', 'sheikah',
+  'korok', 'monster', 'boss', 'character', 'fairy', 'twili',
+  'ancient', 'demon', 'spirit', 'dragon', 'deku', 'yeti',
+  'mogma', 'parella', 'kikwi', 'robot', 'minish', 'oocca',
 ];
 
-const GENERATIONS = [
-  { id: 0, label: 'All Generations' },
-  { id: 1, label: 'Gen I - Kanto' },
-  { id: 2, label: 'Gen II - Johto' },
-  { id: 3, label: 'Gen III - Hoenn' },
-  { id: 4, label: 'Gen IV - Sinnoh' },
-  { id: 5, label: 'Gen V - Unova' },
-  { id: 6, label: 'Gen VI - Kalos' },
-  { id: 7, label: 'Gen VII - Alola' },
-  { id: 8, label: 'Gen VIII - Galar' },
-  { id: 9, label: 'Gen IX - Paldea' },
+const ZELDA_GAMES = [
+  { id: 0, label: 'All Games' },
+  { id: 1, label: 'The Legend of Zelda' },
+  { id: 2, label: 'Zelda II: Adventure of Link' },
+  { id: 3, label: 'A Link to the Past' },
+  { id: 4, label: "Link's Awakening" },
+  { id: 5, label: 'Ocarina of Time' },
+  { id: 6, label: "Majora's Mask" },
+  { id: 7, label: 'Oracle of Seasons/Ages' },
+  { id: 8, label: 'The Wind Waker' },
+  { id: 9, label: 'Four Swords Adventures' },
+  { id: 10, label: 'The Minish Cap' },
+  { id: 11, label: 'Twilight Princess' },
+  { id: 12, label: 'Phantom Hourglass' },
+  { id: 13, label: 'Spirit Tracks' },
+  { id: 14, label: 'Skyward Sword' },
+  { id: 15, label: 'A Link Between Worlds' },
+  { id: 16, label: 'Tri Force Heroes' },
+  { id: 17, label: 'Breath of the Wild' },
+  { id: 18, label: 'Tears of the Kingdom' },
+  { id: 19, label: 'Echoes of Wisdom' },
 ];
-
-function getGenerationId(pokemonId: number): number {
-  if (pokemonId <= 151) return 1;
-  if (pokemonId <= 251) return 2;
-  if (pokemonId <= 386) return 3;
-  if (pokemonId <= 493) return 4;
-  if (pokemonId <= 649) return 5;
-  if (pokemonId <= 721) return 6;
-  if (pokemonId <= 809) return 7;
-  if (pokemonId <= 898) return 8;
-  if (pokemonId <= 1010) return 9;
-  return 10;
-}
 
 export function ExplorerPage() {
   const navigate = useNavigate();
-  const { data: pokemonList, isLoading } = useAllPokemon();
+  const { data: pokemonList, isLoading } = useAllCharacters();
   const [search, setSearch] = useState('');
   const [selectedType, setSelectedType] = useState<string>('');
   const [selectedGen, setSelectedGen] = useState<number>(0);
@@ -64,7 +63,7 @@ export function ExplorerPage() {
     return pokemonList.filter((pokemon) => {
       const nameMatch = pokemon.name.toLowerCase().includes(search.toLowerCase());
       const typeMatch = !selectedType || pokemon.types.some((t) => t.type.name === selectedType);
-      const genMatch = selectedGen === 0 || getGenerationId(pokemon.id) === selectedGen;
+      const genMatch = selectedGen === 0 || getGenerationIdFromPokemonId(pokemon.id) === selectedGen;
       
       const weight = pokemon.weight / 10;
       const weightMatch = !weightRange || (() => {
@@ -183,29 +182,29 @@ export function ExplorerPage() {
             />
           </div>
 
-          {/* Generation filter */}
+          {/* Game filter */}
           <select
             value={selectedGen}
             onChange={(e) => { setSelectedGen(Number(e.target.value)); setVisibleCount(ITEMS_PER_PAGE); }}
             className="bg-dark-hover border border-dark-border rounded-xl py-2 px-3 text-xs sm:text-sm text-text-primary focus:outline-none focus:border-accent transition-colors"
-            aria-label="Filter by generation"
+            aria-label="Filter by game"
           >
-            {GENERATIONS.map((gen) => (
-              <option key={gen.id} value={gen.id}>{gen.label}</option>
+            {ZELDA_GAMES.map((game) => (
+              <option key={game.id} value={game.id}>{game.label}</option>
             ))}
           </select>
 
-          {/* Type filter */}
+          {/* Race filter */}
           <select
             value={selectedType}
             onChange={(e) => { setSelectedType(e.target.value); setVisibleCount(ITEMS_PER_PAGE); }}
             className="bg-dark-hover border border-dark-border rounded-xl py-2 px-3 text-xs sm:text-sm text-text-primary focus:outline-none focus:border-accent transition-colors"
             aria-label={t('explorer.filterType', language)}
           >
-            <option value="">{t('explorer.allTypes', language)}</option>
-            {POKEMON_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {capitalize(type)}
+            <option value="">{t('explorer.allRaces', language)}</option>
+            {ZELDA_RACES.map((race) => (
+              <option key={race} value={race}>
+                {capitalize(race)}
               </option>
             ))}
           </select>
@@ -244,7 +243,7 @@ export function ExplorerPage() {
         </div>
 
         <p className="text-[10px] sm:text-xs text-text-secondary">
-          {t('explorer.showing', language)} {visiblePokemon.length} {t('explorer.of', language)} {filteredPokemon.length} {t('common.pokemon', language)}
+          {t('explorer.showing', language)} {visiblePokemon.length} {t('explorer.of', language)} {filteredPokemon.length} {t('common.characters', language)}
         </p>
       </motion.div>
 
@@ -255,7 +254,7 @@ export function ExplorerPage() {
             key={pokemon.id}
             pokemon={pokemon}
             index={index}
-            onClick={() => navigate(`/pokemon/${pokemon.id}`)}
+            onClick={() => navigate(`/character/${pokemon.id}`)}
             language={language}
           />
         ))}
@@ -292,7 +291,7 @@ function PokemonCard({ pokemon, index, onClick, language }: {
     >
       {/* Generation Badge - top right */}
       <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2">
-        <GenerationBadge pokemonId={pokemon.id} size="sm" />
+        <EraBadge pokemonId={pokemon.id} size="sm" />
       </div>
 
       <div className="flex items-center gap-3 sm:gap-4">

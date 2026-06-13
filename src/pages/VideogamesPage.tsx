@@ -1,7 +1,7 @@
 /**
- * VideogamesPage - Pokémon Video Games Database
+ * VideogamesPage - Zelda Video Games Database
  *
- * Fetches and displays all Pokémon video games from the RAWG API.
+ * Fetches and displays all Zelda video games from the RAWG API.
  * Features:
  * - Grid of game cards with cover art, rating, release date
  * - Search by name
@@ -15,7 +15,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, X, ChevronDown, ChevronUp, Star, Calendar, Monitor, Clock, Gamepad2, ArrowLeft, ArrowRight, Trophy } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
-import { fetchPokemonGames, fetchGameDetail, fetchPlatforms } from '@/services/rawg.service';
+import { fetchPokemonGames as fetchZeldaGames, fetchGameDetail, fetchPlatforms } from '@/services/rawg.service';
 import type { RawgGame, RawgGameDetail, Platform } from '@/services/rawg.service';
 
 const PLATFORM_LOGOS: Record<string, string> = {
@@ -84,7 +84,7 @@ export function VideogamesPage() {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    fetchPokemonGames(page, 20, debouncedSearch || undefined, selectedPlatform || undefined)
+    fetchZeldaGames(page, 20, debouncedSearch || undefined, selectedPlatform || undefined)
       .then((data) => { if (!cancelled) { setGames(data.results); setTotalCount(data.count); setLoading(false); } })
       .catch((err) => { if (!cancelled) { setError(err.message); setLoading(false); } });
     return () => { cancelled = true; };
@@ -106,8 +106,8 @@ export function VideogamesPage() {
   return (
     <div className="space-y-8">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
-        <h1 className="text-3xl font-bold gradient-text">Pokémon Videogames</h1>
-        <p className="text-text-secondary">Complete database of Pokémon video games across all consoles and generations</p>
+        <h1 className="text-3xl font-bold gradient-text">Zelda Videogames</h1>
+        <p className="text-text-secondary">Complete database of The Legend of Zelda video games across all consoles and generations</p>
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="relative">
@@ -116,7 +116,7 @@ export function VideogamesPage() {
             <div className="flex-1 relative">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)' }} />
               <input ref={searchRef} type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search Pokémon games..."
+                placeholder="Search Zelda games..."
                 className="w-full pl-9 pr-8 py-2.5 rounded-xl text-sm outline-none transition-all"
                 style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)', color: isDark ? '#ffffff' : '#1a1a2e', border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}` }}
               />
@@ -152,7 +152,7 @@ export function VideogamesPage() {
       </motion.div>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="flex items-center justify-between">
-        <p className="text-sm" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.35)' }}>{totalCount} Pokémon games found</p>
+        <p className="text-sm" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.35)' }}>{totalCount} Zelda games found</p>
         {loading && <div className="flex items-center gap-2 text-sm" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.35)' }}>
           <div className="w-4 h-4 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)', borderTopColor: '#ff4d6d' }} /> Loading...</div>}
       </motion.div>
@@ -203,7 +203,7 @@ export function VideogamesPage() {
       {!loading && !error && games.length === 0 && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
           <Gamepad2 size={64} className="mx-auto mb-4" style={{ opacity: 0.2 }} />
-          <p className="text-lg font-medium" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.35)' }}>No Pokémon games found</p>
+          <p className="text-lg font-medium" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.35)' }}>No Zelda games found</p>
           <p className="text-sm mt-1" style={{ color: isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.2)' }}>Try adjusting your search or filters</p>
         </motion.div>
       )}

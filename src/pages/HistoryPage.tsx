@@ -1,18 +1,18 @@
 /**
- * HistoryPage - Pokémon History Timeline
+ * HistoryPage - Zelda History Timeline
  *
- * Interactive timeline showcasing the history of Pokémon from its inception
+ * Interactive timeline showcasing the history of The Legend of Zelda from its inception
  * to the present day. Features:
  * - Chronological timeline with key milestones
- * - Images, maps, and curiosities
- * - Generation-by-generation breakdown
+ * - Game-by-game breakdown
  * - Avant-garde visual design
  */
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/store/useAppStore';
-import { ChevronDown, ChevronUp, MapPin, Sparkles, Gamepad2, Globe, BookOpen, Star, Award, Zap } from 'lucide-react';
+import { t } from '@/constants/translations';
+import { ChevronDown, ChevronUp, Sparkles, Gamepad2, Globe, BookOpen, Star, Award, Zap, Sword, Shield, Gem } from 'lucide-react';
 
 interface TimelineEvent {
   year: string;
@@ -28,289 +28,226 @@ interface TimelineEvent {
 
 const TIMELINE_EVENTS: TimelineEvent[] = [
   {
-    year: '1989',
-    title: 'The Birth of an Idea',
-    subtitle: 'Satoshi Tajiri conceives Pokémon',
-    description: 'Satoshi Tajiri, a video game designer fascinated by insect collecting as a child, conceptualizes a game about creatures that can be collected and traded. The idea is inspired by his childhood hobby of collecting insects in the rural areas around Tokyo, combined with his love for the Game Boy link cable that allowed players to connect their devices.',
+    year: '1986',
+    title: 'The Legend of Zelda',
+    subtitle: 'The Birth of a Legend',
+    description: 'Shigeru Miyamoto and Takashi Tezuka release the first Zelda game for the Famicom Disk System. Inspired by Miyamoto\'s childhood explorations of caves and forests in Kyoto, the game introduces players to the land of Hyrule, the hero Link, and the princess Zelda. Its non-linear gameplay, secret discoveries, and the iconic "It\'s dangerous to go alone! Take this." moment set the foundation for action-adventure gaming.',
     icon: <Sparkles size={20} />,
-    color: '#ff4d6d',
+    color: '#C6A15B',
     facts: [
-      'Tajiri founded Game Freak in 1989 with a small team',
-      'The name "Pokémon" comes from "Pocket Monsters" (ポケットモンスター)',
-      'Initially, Tajiri struggled to find a publisher for his idea',
-      'The concept was considered too niche by many publishers',
+      'First game to feature a save feature on the Famicom Disk System',
+      'The name "Zelda" comes from Zelda Fitzgerald, wife of author F. Scott Fitzgerald',
+      'Originally released in Japan on February 21, 1986',
+      'Introduced the Triforce, Master Sword, and Ganon',
+      'Sold over 6.5 million copies worldwide',
     ],
     type: 'milestone',
   },
   {
-    year: '1996',
-    title: 'Pokémon Red & Green',
-    subtitle: 'The Phenomenon Begins (Japan)',
-    description: 'Pokémon Red and Green Versions launch in Japan for the Game Boy. The games introduce 151 Pokémon in the Kanto region. Players take on the role of a young Trainer on a quest to become the Pokémon Champion by defeating Gym Leaders and the Elite Four, while also trying to complete the Pokédex by catching all Pokémon.',
-    icon: <Gamepad2 size={20} />,
-    color: '#e17055',
-    image: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png',
+    year: '1987',
+    title: 'Zelda II: The Adventure of Link',
+    subtitle: 'A Bold Departure',
+    description: 'The direct sequel takes a radically different approach, featuring side-scrolling combat, RPG-style experience points, and magic spells. Link travels across Hyrule to awaken Princess Zelda from a sleeping curse placed by an evil wizard. Though divisive among fans, the game introduced many elements that would become series staples.',
+    icon: <Sword size={20} />,
+    color: '#5B8A9E',
     facts: [
-      'Original Japanese versions: Red, Green, and later Blue',
-      'Only 151 Pokémon in the first generation (Kanto)',
-      'The games sold over 10 million copies in Japan alone',
-      'Mew was a secret Pokémon, only obtainable through Nintendo events',
-      'The MissingNo. glitch became one of gaming\'s most famous bugs',
+      'Only Zelda game with side-scrolling combat as the primary view',
+      'Introduced RPG elements: experience points, levels, and magic',
+      'Link learns spells like Reflect, Jump, and Fairy',
+      'First appearance of Dark Link (Shadow Link)',
+      'The most difficult game in the original series',
+    ],
+    type: 'generation',
+  },
+  {
+    year: '1992',
+    title: 'A Link to the Past',
+    subtitle: 'The Golden Age Begins',
+    description: 'Returning to the top-down perspective, A Link to the Past perfects the original formula. Set generations after the first game, Link must rescue the descendants of the Seven Sages and defeat Ganon in the Dark World. Widely regarded as one of the greatest video games of all time, it established the template for all future 2D Zelda games.',
+    icon: <Star size={20} />,
+    color: '#3E6B48',
+    facts: [
+      'Introduced the concept of the Light World and Dark World',
+      'First game to feature the Master Sword as a central plot element',
+      'The "Spin Attack" became a permanent series staple',
+      'Considered one of the greatest games of the 16-bit era',
+      'Sold over 4.6 million copies worldwide',
+    ],
+    type: 'generation',
+  },
+  {
+    year: '1993',
+    title: "Link's Awakening",
+    subtitle: 'A Portable Masterpiece',
+    description: 'The first handheld Zelda game takes Link to the mysterious Koholint Island, where he must awaken the Wind Fish to escape. Stripped of the traditional Hyrule setting and Zelda characters, the game features a dreamlike narrative, trading sequences, and cameos from other Nintendo franchises like Mario and Kirby.',
+    icon: <Gamepad2 size={20} />,
+    color: '#E8A040',
+    facts: [
+      'First handheld Zelda game, released for Game Boy',
+      'No Princess Zelda, Ganon, or Triforce appear in the story',
+      'Features a trading sequence with over 10 items',
+      'Includes cameos from Mario, Yoshi, Kirby, and Dr. Wright',
+      'The Wind Fish egg is one of gaming\'s most iconic mysteries',
     ],
     type: 'generation',
   },
   {
     year: '1998',
-    title: 'Pokémon Red & Blue',
-    subtitle: 'Global Takeover',
-    description: 'Pokémon explodes worldwide with the international release of Red and Blue versions. The anime series debuts, introducing millions to Ash Ketchum and his Pikachu. The Pokémon Trading Card Game launches, becoming a global phenomenon. Pokémon becomes a multi-billion dollar franchise spanning games, anime, movies, toys, and more.',
+    title: 'Ocarina of Time',
+    subtitle: 'The 3D Revolution',
+    description: 'The first 3D Zelda game revolutionizes the action-adventure genre. Link travels through time between his childhood and adulthood, playing the Ocarina of Time to solve puzzles and warp across Hyrule. With its Z-targeting combat system, time travel narrative, and emotional story, Ocarina of Time is consistently ranked as the greatest video game of all time.',
+    icon: <Award size={20} />,
+    color: '#C6A15B',
+    facts: [
+      'First 3D Zelda game, released for Nintendo 64',
+      'Introduced Z-targeting, now a standard in 3D action games',
+      'Features the iconic "Song of Time" and time travel mechanics',
+      'Metacritic score of 99 — the highest-rated game ever',
+      'Sold over 7.6 million copies worldwide',
+    ],
+    type: 'generation',
+  },
+  {
+    year: '2000',
+    title: "Majora's Mask",
+    subtitle: 'The Darkest Timeline',
+    description: 'Using the same engine as Ocarina of Time, Majora\'s Mask presents a darker, more surreal adventure. Link is trapped in Termina, a parallel world where the moon is crashing in three days. The game\'s time loop mechanic forces players to relive the same three days, learning the schedules of every character and solving their personal tragedies.',
+    icon: <Gem size={20} />,
+    color: '#5B3A8B',
+    facts: [
+      'Completed in just 18 months of development',
+      'Features a 3-day time cycle with real-time character schedules',
+      'Over 20 unique masks with different abilities',
+      'Darker tone exploring themes of loss, grief, and acceptance',
+      'The "Fierce Deity" mask is one of gaming\'s most powerful rewards',
+    ],
+    type: 'generation',
+  },
+  {
+    year: '2001',
+    title: 'Oracle of Seasons & Ages',
+    subtitle: 'A Linked Adventure',
+    description: 'Two interconnected Game Boy Color games released simultaneously. Oracle of Seasons focuses on changing the seasons with the Rod of Seasons, while Oracle of Ages focuses on time travel with the Harp of Ages. Using a password system, players could link both games to unlock the true final boss and ending.',
+    icon: <Gamepad2 size={20} />,
+    color: '#78C850',
+    facts: [
+      'Developed by Capcom\'s Flagship studio under Nintendo supervision',
+      'Two games that connect via password system for the true ending',
+      'Seasons changes the environment; Ages changes the timeline',
+      'Features the "Hero\'s Secret" — a hidden final boss in the linked game',
+      'Originally planned as a trilogy, but the third game was cancelled',
+    ],
+    type: 'generation',
+  },
+  {
+    year: '2003',
+    title: 'The Wind Waker',
+    subtitle: 'Sailing the Great Sea',
+    description: 'After the initial backlash for its cel-shaded art style, The Wind Waker became beloved for its timeless visuals and emotional story. Set centuries after Ocarina of Time, Hyrule is flooded, and Link sails the Great Sea in search of his kidnapped sister. The game\'s expressive animation, vibrant world, and poignant narrative make it a fan favorite.',
     icon: <Globe size={20} />,
-    color: '#6c5ce7',
+    color: '#3B7DD8',
     facts: [
-      'Pokémon Red & Blue sold over 31 million copies worldwide',
-      'The anime debuted in the US in September 1998',
-      'Pikachu became the most recognizable Pokémon globally',
-      'The "Pokémania" craze swept across schools worldwide',
-      'Pokémon: The First Movie grossed over $163 million globally',
-    ],
-    type: 'milestone',
-  },
-  {
-    year: '1999',
-    title: 'Pokémon Gold & Silver',
-    subtitle: 'Generation II - Johto Region',
-    description: 'The second generation introduces 100 new Pokémon, the Johto region, breeding mechanics, held items, the PokéGear, and a day/night cycle. Most notably, after completing the Johto region, players can return to Kanto, effectively giving players two regions to explore. This remains one of the most beloved features in Pokémon history.',
-    icon: <Gamepad2 size={20} />,
-    color: '#fdcb6e',
-    facts: [
-      'Introduced 100 new Pokémon (total: 251)',
-      'First games with a real-time clock and day/night cycle',
-      'Players could explore both Johto AND Kanto regions',
-      'Introduced breeding, shiny Pokémon, and held items',
-      'Considered by many fans as the best Pokémon games ever',
+      'Cel-shaded art style was initially controversial, later praised',
+      'Features the vast Great Sea with over 40 islands to explore',
+      'The "Picto Box" lets players take photos for side quests',
+      'Ganondorf\'s backstory is explored more deeply than ever before',
+      'The HD remaster on Wii U is considered the definitive version',
     ],
     type: 'generation',
-  },
-  {
-    year: '2002',
-    title: 'Pokémon Ruby & Sapphire',
-    subtitle: 'Generation III - Hoenn Region',
-    description: 'The third generation moves to the Game Boy Advance with Ruby and Sapphire. Set in the Hoenn region, these games introduce 135 new Pokémon, double battles, abilities, natures, and Pokémon Contests. The graphics see a massive upgrade, and the games introduce weather conditions that affect battles.',
-    icon: <Gamepad2 size={20} />,
-    color: '#00b894',
-    facts: [
-      'Introduced 135 new Pokémon (total: 386)',
-      'First games on Game Boy Advance with enhanced graphics',
-      'Introduced Abilities and Natures - core mechanics ever since',
-      'Double Battles debuted, becoming a staple in competitive play',
-      'Pokémon Contests offered an alternative to battling',
-    ],
-    type: 'generation',
-  },
-  {
-    year: '2004',
-    title: 'Pokémon FireRed & LeafGreen',
-    subtitle: 'Kanto Returns',
-    description: 'Faithful remakes of the original Red and Green versions, rebuilt from the ground up for the Game Boy Advance. These remakes include all the mechanical improvements of Generation III while preserving the classic Kanto adventure. The Sevii Islands post-game content adds new areas to explore.',
-    icon: <Star size={20} />,
-    color: '#e17055',
-    facts: [
-      'First remakes in the Pokémon series',
-      'Included the Sevii Islands as new post-game content',
-      'Wireless adapter supported for trading and battling',
-      'Set the standard for future Pokémon remakes',
-    ],
-    type: 'milestone',
   },
   {
     year: '2006',
-    title: 'Pokémon Diamond & Pearl',
-    subtitle: 'Generation IV - Sinnoh Region',
-    description: 'The fourth generation arrives on the Nintendo DS, introducing 107 new Pokémon, the Sinnoh region, online trading and battling via Nintendo Wi-Fi Connection, the Global Trade Station (GTS), and a physical/special move split that revolutionized competitive battling.',
-    icon: <Gamepad2 size={20} />,
-    color: '#74b9ff',
+    title: 'Twilight Princess',
+    subtitle: 'The Darkest Hyrule',
+    description: 'A darker, more realistic Zelda game released for GameCube and Wii. Link transforms into a wolf in the Twilight Realm, partnered with the mysterious Midna. The game\'s motion controls on Wii introduced a new way to play, while its mature story and epic scale made it a launch title for Nintendo\'s new console.',
+    icon: <Shield size={20} />,
+    color: '#704070',
     facts: [
-      'Introduced 107 new Pokémon (total: 493)',
-      'First Pokémon games with online play via Nintendo Wi-Fi',
-      'The physical/special split changed competitive battling forever',
-      'Introduced the Global Trade Station (GTS)',
-      'Platinum version added the Distortion World',
+      'Released as a launch title for the Wii console',
+      'Link transforms into a wolf in the Twilight Realm',
+      'Midna is one of the most beloved companion characters in gaming',
+      'Features the largest Hyrule field of any game at the time',
+      'The "Hidden Skills" system adds combat depth',
     ],
     type: 'generation',
   },
   {
-    year: '2010',
-    title: 'Pokémon Black & White',
-    subtitle: 'Generation V - Unova Region',
-    description: 'The fifth generation takes players to the Unova region, inspired by New York City. These games feature 156 new Pokémon - the largest number of new Pokémon introduced in any generation. The games feature fully animated sprites, seasons that change monthly, and a deeper narrative about the ethics of Pokémon training.',
-    icon: <Gamepad2 size={20} />,
-    color: '#a29bfe',
+    year: '2011',
+    title: 'Skyward Sword',
+    subtitle: 'The Beginning of the Timeline',
+    description: 'The chronological first game in the Zelda timeline. Skyward Sword tells the origin story of the Master Sword, the Goddess Hylia, and the eternal conflict with Demise. The game\'s 1:1 motion controls with Wii MotionPlus require precise sword swings, making combat more immersive than ever.',
+    icon: <Sword size={20} />,
+    color: '#E8D8B0',
     facts: [
-      'Introduced 156 new Pokémon (total: 649) - the most ever',
-      'First games with fully animated Pokémon sprites in battle',
-      'Seasonal system that changed the environment monthly',
-      'Deeper story exploring the ethics of Pokémon training',
-      'Black 2 & White 2 were direct sequels, not third versions',
+      'First game chronologically in the official Zelda timeline',
+      '1:1 motion controls require precise sword swings',
+      'Introduces the Goddess Hylia and the demon Demise',
+      'Link rides a giant bird called a Loftwing',
+      'The "Groose" character became an unexpected fan favorite',
     ],
     type: 'generation',
   },
   {
-    year: '2013',
-    title: 'Pokémon X & Y',
-    subtitle: 'Generation VI - Kalos Region',
-    description: 'The sixth generation marks Pokémon\'s transition to 3D on the Nintendo 3DS. Set in the Kalos region (inspired by France), these games introduce 72 new Pokémon, Mega Evolution, Fairy type, character customization, and the Player Search System (PSS) for online interaction.',
-    icon: <Gamepad2 size={20} />,
-    color: '#fd79a8',
+    year: '2017',
+    title: 'Breath of the Wild',
+    subtitle: 'The Open World Revolution',
+    description: 'Breath of the Wild redefines the Zelda franchise with a fully open world where anything is possible. Link awakens from a 100-year slumber to defeat Calamity Ganon and save Hyrule. The game\'s physics engine, emergent gameplay, and freedom of exploration set a new standard for open-world games worldwide.',
+    icon: <Zap size={20} />,
+    color: '#3E6B48',
     facts: [
-      'Introduced 72 new Pokémon (total: 721)',
-      'First main series games in full 3D',
-      'Mega Evolution - a temporary evolution mechanic',
-      'Fairy type added to balance Dragon-type dominance',
-      'First games with character customization',
-    ],
-    type: 'generation',
-  },
-  {
-    year: '2016',
-    title: 'Pokémon GO',
-    subtitle: 'Augmented Reality Revolution',
-    description: 'Niantic and The Pokémon Company release Pokémon GO, a mobile augmented reality game that becomes a global phenomenon. Players explore the real world to find and catch Pokémon, battle in Gyms, and participate in Raid Battles. The game revitalizes the franchise and brings Pokémon to a new generation of fans.',
-    icon: <MapPin size={20} />,
-    color: '#00b894',
-    facts: [
-      'Over 1 billion downloads worldwide',
-      'Generated over $6 billion in revenue by 2023',
-      'Broke records for most downloaded mobile game in its first month',
-      'Encouraged physical activity and exploration',
-      'Introduced AR technology to mainstream gaming',
-    ],
-    type: 'milestone',
-  },
-  {
-    year: '2016',
-    title: 'Pokémon Sun & Moon',
-    subtitle: 'Generation VII - Alola Region',
-    description: 'The seventh generation takes place in the Alola region, inspired by Hawaii. These games replace traditional Gyms with Island Trials and introduce 88 new Pokémon, Z-Moves, regional variants (Alolan Forms), and the Rotom Pokédex. The games also feature a more story-driven approach.',
-    icon: <Gamepad2 size={20} />,
-    color: '#fdcb6e',
-    facts: [
-      'Introduced 88 new Pokémon (total: 809)',
-      'Replaced Gyms with Island Trials - a major departure',
-      'Introduced regional variants (Alolan Forms)',
-      'Z-Moves: powerful one-time attacks',
-      'Ultra Sun & Ultra Moon expanded the story significantly',
-    ],
-    type: 'generation',
-  },
-  {
-    year: '2018',
-    title: 'Pokémon: Let\'s Go!',
-    subtitle: 'Kanto Reimagined',
-    description: 'Pokémon: Let\'s Go, Pikachu! and Let\'s Go, Eevee! reimagine the original Kanto adventure for Nintendo Switch. These games bridge the gap between main series and Pokémon GO, featuring simplified catching mechanics, co-op play, and connectivity with Pokémon GO.',
-    icon: <Star size={20} />,
-    color: '#e17055',
-    facts: [
-      'First main series Pokémon games on Nintendo Switch',
-      'Integrated Pokémon GO catching mechanics',
-      'Supported co-op multiplayer',
-      'Pokémon visible in the overworld (no random encounters)',
-      'Could transfer Pokémon from Pokémon GO',
-    ],
-    type: 'milestone',
-  },
-  {
-    year: '2019',
-    title: 'Pokémon Sword & Shield',
-    subtitle: 'Generation VIII - Galar Region',
-    description: 'The eighth generation brings Pokémon to home consoles with Sword and Shield on Nintendo Switch. Set in the Galar region (inspired by the UK), these games introduce 96 new Pokémon, Dynamax and Gigantamax mechanics, the Wild Area (an open-world zone), and a focus on Pokémon battles as a spectator sport.',
-    icon: <Gamepad2 size={20} />,
-    color: '#6c5ce7',
-    facts: [
-      'Introduced 96 new Pokémon (total: 905)',
-      'First main series games on home console (Switch)',
-      'Wild Area: first open-world zone in Pokémon history',
-      'Dynamax/Gigantamax: giant Pokémon transformations',
-      'The Isle of Armor & Crown Tundra DLC expanded the game',
-    ],
-    type: 'generation',
-  },
-  {
-    year: '2022',
-    title: 'Pokémon Legends: Arceus',
-    subtitle: 'A Bold New Direction',
-    description: 'Pokémon Legends: Arceus revolutionizes the Pokémon formula by setting the game in the feudal Hisui region (ancient Sinnoh). Players explore a fully open world, complete research tasks for the first Pokédex, and experience a new action-oriented battle system. The game is praised for its fresh take on the franchise.',
-    icon: <Award size={20} />,
-    color: '#00cec9',
-    facts: [
-      'Set in the past, before modern Pokémon technology',
-      'Fully open-world exploration',
-      'Action-oriented battle system (no random encounters)',
-      'Pokémon can be caught without battling',
-      'Considered one of the best Pokémon games in years',
-    ],
-    type: 'generation',
-  },
-  {
-    year: '2022',
-    title: 'Pokémon Scarlet & Violet',
-    subtitle: 'Generation IX - Paldea Region',
-    description: 'The ninth generation delivers the first fully open-world Pokémon RPG. Set in the Paldea region (inspired by Spain), these games introduce 120+ new Pokémon, Terastallization, three separate story paths, and seamless multiplayer exploration with up to 4 players.',
-    icon: <Gamepad2 size={20} />,
-    color: '#ff4d6d',
-    facts: [
-      'Introduced 120+ new Pokémon (total: 1025+)',
-      'First fully open-world Pokémon RPG',
-      'Three separate story paths to complete',
-      'Terastallization changes Pokémon types mid-battle',
-      'Seamless co-op multiplayer exploration',
+      'First open-world Zelda game with complete freedom of exploration',
+      'Over 100 Shrines of Trials to complete',
+      'The "Paraglider" replaces the traditional horse as primary transport',
+      'Won over 200 Game of the Year awards',
+      'Sold over 30 million copies worldwide',
     ],
     type: 'generation',
   },
   {
     year: '2023',
-    title: 'Pokémon: The Hidden Treasure of Area Zero',
-    subtitle: 'Paldea Expansion',
-    description: 'The Pokémon Scarlet & Violet DLC expands the Paldea region with The Teal Mask (Kitakami region, inspired by rural Japan) and The Indigo Disk (Blueberry Academy, an underwater terrarium). These expansions add new Pokémon, characters, and the return of every starter Pokémon from previous generations.',
-    icon: <Sparkles size={20} />,
-    color: '#a29bfe',
+    title: 'Tears of the Kingdom',
+    subtitle: 'The Sky and the Depths',
+    description: 'The direct sequel to Breath of the Wild expands Hyrule vertically with floating Sky Islands and the vast Depths below. New abilities like Ultrahand, Fuse, and Recall allow unprecedented creativity in solving puzzles and traversing the world. The game builds on its predecessor\'s foundation while adding entirely new dimensions to explore.',
+    icon: <Star size={20} />,
+    color: '#5B8A9E',
     facts: [
-      'Two DLC parts: The Teal Mask and The Indigo Disk',
-      'Kitakami region inspired by Japanese folklore',
-      'Blueberry Academy features an underwater terrarium',
-      'Every starter Pokémon from all 9 generations is obtainable',
-      'Synchro Machine lets players explore as their Pokémon',
+      'Adds Sky Islands above Hyrule and the Depths below ground',
+      'Ultrahand lets players build vehicles, bridges, and contraptions',
+      'Fuse combines items to create new weapons and tools',
+      'The Depths are a massive dark underground world to explore',
+      'Sold over 20 million copies in its first year',
     ],
-    type: 'milestone',
+    type: 'generation',
   },
   {
     year: '2024',
-    title: 'Pokémon TCG Pocket',
-    subtitle: 'Digital Card Revolution',
-    description: 'The Pokémon Trading Card Game goes digital with Pokémon TCG Pocket, a mobile app that lets players collect and battle with digital cards. The app features immersive card art, quick battles, and daily booster pack openings, bringing the joy of card collecting to millions of smartphones worldwide.',
-    icon: <BookOpen size={20} />,
-    color: '#fdcb6e',
+    title: 'Echoes of Wisdom',
+    subtitle: 'Zelda Takes the Lead',
+    description: 'For the first time in series history, Princess Zelda is the main playable character. Using the Tri Rod, she creates "echoes" — copies of objects and monsters — to solve puzzles and defeat enemies. The game returns to the top-down perspective of A Link to the Past while introducing innovative new mechanics.',
+    icon: <Gem size={20} />,
+    color: '#E8A0D8',
     facts: [
-      'Over 100 million downloads in its first months',
-      'Features immersive card art with 3D animations',
-      'Quick 15-minute battles perfect for mobile',
-      'Daily free booster pack openings',
-      'Regular events and new card expansions',
+      'First mainline Zelda game with Princess Zelda as the protagonist',
+      'Uses a top-down perspective similar to A Link to the Past',
+      'The "Echo" system lets players copy and summon objects/enemies',
+      'Developed by Grezzo, the studio behind Link\'s Awakening HD',
+      'Celebrated for its fresh take on the classic Zelda formula',
     ],
-    type: 'milestone',
+    type: 'generation',
   },
   {
     year: '2025',
-    title: 'Pokémon Champions',
-    subtitle: 'Competitive Battling Evolved',
-    description: 'The Pokémon Company announces Pokémon Champions, a new competitive battling platform that connects Pokémon HOME, Pokémon GO, and the main series games. This cross-platform service allows trainers from all games to battle each other in real-time competitive matches.',
-    icon: <Zap size={20} />,
-    color: '#74b9ff',
+    title: 'HyruleDex',
+    subtitle: 'The Ultimate Zelda Encyclopedia',
+    description: 'HyruleDex launches as the definitive digital encyclopedia of The Legend of Zelda universe. Compiling data from the Hyrule Compendium and Zelda Fan APIs, it catalogs every character, monster, boss, item, and location across the entire series. A tribute to the franchise that has inspired generations of gamers worldwide.',
+    icon: <BookOpen size={20} />,
+    color: '#C6A15B',
     facts: [
-      'Cross-platform competitive battling',
-      'Connects Pokémon HOME, GO, and main series',
-      'Real-time competitive matchmaking',
-      'New ranking and tournament systems',
-      'Bridges the gap between mobile and console players',
+      'Comprehensive database of Zelda characters, monsters, and items',
+      'Powered by the Zelda Fan API and Hyrule Compendium',
+      'Features interactive timelines, comparisons, and statistics',
+      'Bilingual support: English and Spanish',
+      'A fan-made tribute to The Legend of Zelda franchise',
     ],
     type: 'milestone',
   },
@@ -333,9 +270,9 @@ export function HistoryPage() {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-2"
       >
-        <h1 className="text-3xl font-bold gradient-text">Pokémon History</h1>
+        <h1 className="text-3xl font-bold gradient-text">{t('history.title', language)}</h1>
         <p className="text-text-secondary">
-          Explore the complete history of Pokémon — from Satoshi Tajiri's childhood dream to a global phenomenon spanning generations
+          {t('history.subtitle', language)}
         </p>
       </motion.div>
 
@@ -347,10 +284,10 @@ export function HistoryPage() {
         className="grid grid-cols-2 md:grid-cols-4 gap-3"
       >
         {[
-          { label: 'Years of History', value: `${new Date().getFullYear() - 1989}+`, color: '#ff4d6d' },
-          { label: 'Generations', value: '9', color: '#6c5ce7' },
-          { label: 'Pokémon Created', value: '1025+', color: '#00b894' },
-          { label: 'Games Released', value: '40+', color: '#fdcb6e' },
+          { label: t('history.years', language), value: `${new Date().getFullYear() - 1986}+`, color: '#C6A15B' },
+          { label: t('history.mainGames', language), value: '20+', color: '#3E6B48' },
+          { label: t('history.copiesSold', language), value: '150M+', color: '#5B8A9E' },
+          { label: t('history.creaturesCataloged', language), value: '150+', color: '#E8A040' },
         ].map((stat, i) => (
           <motion.div
             key={stat.label}
@@ -375,7 +312,7 @@ export function HistoryPage() {
         <div
           className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px -translate-x-1/2"
           style={{
-            background: `linear-gradient(to bottom, #ff4d6d, #d946ef, #6c5ce7, #74b9ff, #00b894, #fdcb6e, #ff4d6d)`,
+            background: `linear-gradient(to bottom, #C6A15B, #3E6B48, #5B8A9E, #704070, #E8A040, #C6A15B)`,
             opacity: 0.3,
           }}
         />
@@ -443,7 +380,7 @@ export function HistoryPage() {
                             className="text-[10px] font-semibold uppercase tracking-wider"
                             style={{ color: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.25)' }}
                           >
-                            {event.type === 'generation' ? 'New Generation' : event.type === 'milestone' ? 'Milestone' : 'Curiosity'}
+                            {event.type === 'generation' ? t('history.newGame', language) : event.type === 'milestone' ? t('history.milestone', language) : t('history.curiosity', language)}
                           </span>
                         </div>
                         <h3 className="text-base font-bold" style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}>
@@ -482,23 +419,9 @@ export function HistoryPage() {
                               borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'}`,
                             }}
                           >
-                            {/* Image Placeholder */}
-                            {event.image && (
-                              <div className="mt-4 rounded-xl overflow-hidden">
-                                <img
-                                  src={event.image}
-                                  alt={event.title}
-                                  className="w-full h-32 object-contain p-4"
-                                  style={{
-                                    backgroundColor: `${event.color}11`,
-                                  }}
-                                />
-                              </div>
-                            )}
-
                             {/* Description */}
                             <p
-                              className="text-sm leading-relaxed"
+                              className="text-sm leading-relaxed mt-4"
                               style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)' }}
                             >
                               {event.description}
@@ -507,7 +430,7 @@ export function HistoryPage() {
                             {/* Fun Facts */}
                             <div>
                               <h4 className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: event.color }}>
-                                ✦ Fun Facts
+                                {t('history.funFacts', language)}
                               </h4>
                               <ul className="space-y-1.5">
                                 {event.facts.map((fact, fi) => (
@@ -542,10 +465,10 @@ export function HistoryPage() {
         className="text-center py-8"
       >
         <p className="text-sm" style={{ color: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.25)' }}>
-          Pokémon is a trademark of Nintendo, Game Freak, and The Pokémon Company.
+          {t('history.footer', language)}
         </p>
         <p className="text-xs mt-1" style={{ color: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)' }}>
-          This timeline is a fan-made tribute. Data sourced from Bulbapedia and official Pokémon sources.
+          {t('history.footerDesc', language)}
         </p>
       </motion.div>
     </div>

@@ -16,7 +16,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { STAT_NAMES } from '@/constants';
+import { ATTRIBUTE_NAMES } from '@/constants';
 import type { PokemonWithStats } from '@/types/pokemon';
 
 // Register Chart.js components
@@ -36,11 +36,11 @@ const COMPARISON_COLORS = [
 
 export function BaseStatsRadarChart({ pokemon, height = 400 }: BaseStatsRadarChartProps) {
   const statLabels = useMemo(() => 
-    Object.values(STAT_NAMES),
+    Object.values(ATTRIBUTE_NAMES),
   []);
 
   const chartData = useMemo(() => {
-    const statKeys = Object.keys(STAT_NAMES);
+    const statKeys = Object.keys(ATTRIBUTE_NAMES);
 
     return {
       labels: statLabels,

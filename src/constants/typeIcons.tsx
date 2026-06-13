@@ -122,6 +122,75 @@ export const TYPE_ICONS: Record<string, React.ComponentType<TypeIconProps>> = {
       <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
+  // Zelda races
+  hylian: ({ size = 16, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M12 2L22 8V16L12 22L2 16V8L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/>
+    </svg>
+  ),
+  gerudo: ({ size = 16, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M12 2C12 2 18 6 18 12C18 15.3137 15.3137 18 12 18C8.68629 18 6 15.3137 6 12C6 6 12 2 12 2Z" stroke="currentColor" strokeWidth="2"/>
+      <path d="M12 18V22M12 22L9 19M12 22L15 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="12" cy="10" r="2" fill="currentColor"/>
+    </svg>
+  ),
+  zora: ({ size = 16, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M12 2C12 2 4 8 4 16C4 19.3137 7.58172 22 12 22C16.4183 22 20 19.3137 20 16C20 8 12 2 12 2Z" stroke="currentColor" strokeWidth="2"/>
+      <path d="M12 22V18M12 14V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M8 16L12 14L16 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  goron: ({ size = 16, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+      <path d="M12 2V6M12 18V22M2 12H6M18 12H22" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2"/>
+    </svg>
+  ),
+  rito: ({ size = 16, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M12 2L8 10H16L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M12 10V22M12 22L8 18M12 22L16 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M4 14H8M16 14H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  ),
+  sheikah: ({ size = 16, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M12 2L22 12L12 22L2 12L12 2Z" stroke="currentColor" strokeWidth="2"/>
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/>
+      <path d="M12 5V9M12 15V19M5 12H9M15 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  ),
+  korok: ({ size = 16, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M12 2C8 2 4 6 4 10C4 14 6 18 12 22C18 18 20 14 20 10C20 6 16 2 12 2Z" stroke="currentColor" strokeWidth="2"/>
+      <circle cx="9" cy="10" r="1.5" fill="currentColor"/>
+      <circle cx="15" cy="10" r="1.5" fill="currentColor"/>
+      <path d="M12 14C12 14 10 16 12 18C14 16 12 14 12 14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  ),
+  monster: ({ size = 16, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M4 8L8 4H16L20 8V16L16 20H8L4 16V8Z" stroke="currentColor" strokeWidth="2"/>
+      <circle cx="9" cy="11" r="1.5" fill="currentColor"/>
+      <circle cx="15" cy="11" r="1.5" fill="currentColor"/>
+      <path d="M9 15C9 15 10.5 17 12 17C13.5 17 15 15 15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  ),
+  boss: ({ size = 16, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M12 2L15 9L22 9L16.5 14L18.5 21L12 17L5.5 21L7.5 14L2 9L9 9L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  character: ({ size = 16, className }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="2"/>
+      <path d="M4 22C4 17.5817 7.58172 14 12 14C16.4183 14 20 17.5817 20 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  ),
 };
 
 export function getTypeIcon(typeName: string): React.ComponentType<TypeIconProps> {

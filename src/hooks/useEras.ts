@@ -1,9 +1,9 @@
 /**
- * Generations Hook
+ * Eras Hook
  * 
- * Provides React hooks for fetching and managing Pokémon generation data.
+ * Provides React hooks for fetching and managing Zelda game era data.
  * Uses TanStack Query for caching, deduplication, and background refetching.
- * All generations are loaded dynamically from PokéAPI - no hardcoded lists.
+ * All eras are loaded dynamically from Zelda Fan API - no hardcoded lists.
  */
 
 import { useQuery } from '@tanstack/react-query';
@@ -12,10 +12,10 @@ import { STALE_TIME } from '@/constants';
 import type { GenerationInfo, Generation } from '@/types/generations';
 
 /**
- * Hook to fetch all generations with their details.
- * This is the main hook for generation data across the app.
+ * Hook to fetch all eras with their details.
+ * This is the main hook for era data across the app.
  */
-export function useAllGenerations() {
+export function useAllEras() {
   return useQuery<GenerationInfo[]>({
     queryKey: ['all-generations'],
     queryFn: fetchAllGenerations,
@@ -25,9 +25,9 @@ export function useAllGenerations() {
 }
 
 /**
- * Hook to fetch a specific generation by ID.
+ * Hook to fetch a specific era by ID.
  */
-export function useGeneration(id: number) {
+export function useEra(id: number) {
   return useQuery<Generation>({
     queryKey: ['generation', id],
     queryFn: () => fetchGeneration(id),
@@ -38,24 +38,24 @@ export function useGeneration(id: number) {
 }
 
 /**
- * Hook to get the generation ID for a given Pokémon ID.
+ * Hook to get the era ID for a given character ID.
  * This is a synchronous computation, no API call needed.
  */
-export function usePokemonGeneration(pokemonId: number) {
-  const generationId = getGenerationIdFromPokemonId(pokemonId);
+export function useCharacterEra(characterId: number) {
+  const generationId = getGenerationIdFromPokemonId(characterId);
   const displayName = getGenerationDisplayName(generationId);
   
   return {
-    generationId,
+    eraId: generationId,
     displayName,
   };
 }
 
 /**
- * Hook to get all available generation names for filter dropdowns.
+ * Hook to get all available era names for filter dropdowns.
  */
-export function useGenerationOptions() {
-  const { data: generations, isLoading, error } = useAllGenerations();
+export function useEraOptions() {
+  const { data: generations, isLoading, error } = useAllEras();
 
   const options = generations
     ? generations.map((gen) => ({
@@ -71,9 +71,9 @@ export function useGenerationOptions() {
 }
 
 /**
- * Hook to get the list of generations list (basic, without details).
+ * Hook to get the list of eras (basic, without details).
  */
-export function useGenerationsList() {
+export function useErasList() {
   return useQuery({
     queryKey: ['generations-list'],
     queryFn: fetchGenerationsList,

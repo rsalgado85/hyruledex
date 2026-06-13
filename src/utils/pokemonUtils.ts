@@ -16,7 +16,7 @@ import type {
   TypeAverage,
   Insight,
 } from '@/types/pokemon';
-import { TYPE_COLORS, STAT_NAMES } from '@/constants';
+import { RACE_COLORS, ATTRIBUTE_NAMES } from '@/constants';
 
 /**
  * Computes derived stats from raw Pokémon data.
@@ -65,13 +65,16 @@ export function enrichPokemon(pokemon: Pokemon): PokemonWithStats {
   const frontSprite = pokemon.sprites?.front_default;
   const artworkSprite = pokemon.sprites?.other?.['official-artwork']?.front_default;
 
+  // Generate placeholder if no sprite available (Zelda API doesn't provide images)
+  const fallbackImage = getZeldaImageUrl(pokemon.name, pokemon.id);
+
   return {
     ...pokemon,
     computedStats,
     totalStats,
     dominantType,
-    imageUrl: showdownSprite || frontSprite || '',
-    artworkUrl: artworkSprite || frontSprite || '',
+    imageUrl: showdownSprite || frontSprite || fallbackImage,
+    artworkUrl: artworkSprite || frontSprite || fallbackImage,
   };
 }
 
@@ -94,7 +97,7 @@ export function computeTypeDistribution(pokemonList: Pokemon[]): TypeDistributio
       name,
       count,
       percentage: (count / total) * 100,
-      color: TYPE_COLORS[name] || '#666',
+      color: RACE_COLORS[name] || '#666',
     }))
     .sort((a, b) => b.count - a.count);
 }
@@ -185,7 +188,7 @@ export function getTopPokemonByStat(
       name: p.name,
       imageUrl: p.imageUrl,
       stat: p.computedStats[statName],
-      statName: STAT_NAMES[statName] || statName,
+      statName: ATTRIBUTE_NAMES[statName] || statName,
       types: p.types.map((t) => t.type.name),
     }));
 }
@@ -369,4 +372,14 @@ export function getStatColor(statName: string): string {
     speed: '#fdcb6e',
   };
   return colors[statName] || '#666';
+}
+
+/**
+ * Generates a placeholder image URL for Zelda characters using ui-avatars.com.
+ * Creates a consistent color based on the character's ID.
+ */
+export function getZeldaImageUrl(name: string, id: number): string {
+  const initial = name.charAt(0).toUpperCase();
+  const hue = (id * 47) % 360;
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(initial)}&background=${hue},162,34&color=c6a15b&size=256&bold=true`;
 }

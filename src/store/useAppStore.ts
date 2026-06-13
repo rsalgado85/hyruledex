@@ -87,7 +87,7 @@ export const useAppStore = create<AppState>()(
       setSearchQuery: (query) => set({ searchQuery: query }),
     }),
     {
-      name: 'dashdex-store',
+      name: 'hyruledex-store',
       partialize: (state) => ({
         favorites: state.favorites,
         history: state.history,

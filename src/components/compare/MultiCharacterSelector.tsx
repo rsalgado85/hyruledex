@@ -1,7 +1,7 @@
 /**
- * Multi Pokémon Selector Component
+ * Multi Character Selector Component
  * 
- * Enhanced selector that supports selecting 2, 3, or 4 Pokémon for comparison.
+ * Enhanced selector that supports selecting 2, 3, or 4 characters for comparison.
  * Features:
  * - Dropdown with search that filters in real-time as you type
  * - Shows full list when opened, filters as you type
@@ -11,19 +11,19 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronDown, X } from 'lucide-react';
-import { useAllPokemon } from '@/hooks/usePokemon';
+import { useAllCharacters } from '@/hooks/useCharacters';
 import { capitalize } from '@/utils/pokemonUtils';
 import { getTypeIcon } from '@/constants/typeIcons';
 import type { PokemonWithStats } from '@/types/pokemon';
 
-interface MultiPokemonSelectorProps {
+interface MultiCharacterSelectorProps {
   selected: (PokemonWithStats | null)[];
   onChange: (index: number, pokemon: PokemonWithStats | null) => void;
   maxSlots?: number;
 }
 
-export function MultiPokemonSelector({ selected, onChange, maxSlots = 4 }: MultiPokemonSelectorProps) {
-  const { data: allPokemon } = useAllPokemon();
+export function MultiCharacterSelector({ selected, onChange, maxSlots = 4 }: MultiCharacterSelectorProps) {
+  const { data: allPokemon } = useAllCharacters();
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
   const [search, setSearch] = useState('');
   const dropdownRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -82,7 +82,7 @@ export function MultiPokemonSelector({ selected, onChange, maxSlots = 4 }: Multi
   }, []);
 
   return (
-    <div className="multi-pokemon-selector">
+    <div className="multi-character-selector">
       <div className="selector-slots" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {Array.from({ length: maxSlots }).map((_, index) => (
           <div
@@ -93,13 +93,13 @@ export function MultiPokemonSelector({ selected, onChange, maxSlots = 4 }: Multi
           >
             <div className="slot-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
               <span className="slot-label" style={{ fontSize: '11px', fontWeight: 600, color: 'var(--color-text-secondary, #94a3b8)' }}>
-                Pokémon {index + 1}
+                Character {index + 1}
               </span>
               {selected[index] && (
                 <button
                   className="slot-remove"
                   onClick={() => handleRemove(index)}
-                  aria-label={`Remove Pokémon ${index + 1}`}
+                  aria-label={`Remove Character ${index + 1}`}
                   style={{
                     padding: '4px',
                     borderRadius: '6px',
@@ -124,7 +124,7 @@ export function MultiPokemonSelector({ selected, onChange, maxSlots = 4 }: Multi
             <button
               className={`slot-selector ${selected[index] ? 'has-value' : ''}`}
               onClick={() => toggleDropdown(index)}
-              aria-label={`Select Pokémon ${index + 1}`}
+              aria-label={`Select Character ${index + 1}`}
               aria-expanded={openDropdown === index}
               style={{
                 width: '100%',
@@ -171,7 +171,7 @@ export function MultiPokemonSelector({ selected, onChange, maxSlots = 4 }: Multi
                 </div>
               ) : (
                 <span style={{ color: 'var(--color-text-secondary, #94a3b8)', flex: 1, textAlign: 'left' }}>
-                  Select Pokémon
+                  Select Character
                 </span>
               )}
               <ChevronDown
@@ -265,7 +265,7 @@ export function MultiPokemonSelector({ selected, onChange, maxSlots = 4 }: Multi
                   }}>
                     {filteredPokemon.length === 0 ? (
                       <div style={{ padding: '24px', textAlign: 'center', color: 'var(--color-text-secondary, #94a3b8)', fontSize: '12px' }}>
-                        No Pokémon found
+                        No creatures found
                       </div>
                     ) : (
                       filteredPokemon.map((p) => {
@@ -332,7 +332,7 @@ export function MultiPokemonSelector({ selected, onChange, maxSlots = 4 }: Multi
                     fontSize: '10px',
                     color: 'var(--color-text-secondary, #94a3b8)',
                   }}>
-                    {filteredPokemon.length} Pokémon {search ? `matching "${search}"` : ''}
+                    {filteredPokemon.length} Creatures {search ? `matching "${search}"` : ''}
                   </div>
                 </motion.div>
               )}

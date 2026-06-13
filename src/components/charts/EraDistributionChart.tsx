@@ -1,11 +1,11 @@
 /**
- * Generation Distribution Chart
+ * Era Distribution Chart
  * 
- * Bar chart showing the distribution of Pokémon across generations.
+ * Bar chart showing the distribution of characters across eras.
  * Uses Chart.js for better performance with large datasets.
  * Features:
  * - Toggle show/hide values
- * - Click on bars to open modal with Pokémon list
+ * - Click on bars to open modal with character list
  */
 
 import { useMemo, useState } from 'react';
@@ -20,23 +20,23 @@ import {
   Legend,
 } from 'chart.js';
 import { getGenerationDisplayName } from '@/services/generation.service';
-import { PokemonListModal } from '@/components/common/PokemonListModal';
-import { useAllPokemon } from '@/hooks/usePokemon';
+import { CharacterListModal } from '@/components/common/CharacterListModal';
+import { useAllCharacters } from '@/hooks/useCharacters';
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-interface GenerationData {
+interface EraData {
   generationId: number;
   count: number;
 }
 
-interface GenerationDistributionChartProps {
-  data: GenerationData[];
+interface EraDistributionChartProps {
+  data: EraData[];
   height?: number;
 }
 
-const GENERATION_COLORS = [
+const ERA_COLORS = [
   '#6c5ce7', '#a29bfe', '#74b9ff', '#00b894', '#00cec9',
   '#fdcb6e', '#e17055', '#d63031', '#fd79a8', '#e84393',
   '#636e72', '#b2bec3',
@@ -55,10 +55,10 @@ function getGenerationIdFromPokemonId(pokemonId: number): number {
   return 10;
 }
 
-export function GenerationDistributionChart({ data, height = 400 }: GenerationDistributionChartProps) {
+export function EraDistributionChart({ data, height = 400 }: EraDistributionChartProps) {
   const [showValues, setShowValues] = useState(false);
   const [selectedGen, setSelectedGen] = useState<number | null>(null);
-  const { data: allPokemon } = useAllPokemon();
+  const { data: allPokemon } = useAllCharacters();
 
   const pokemonByGen = useMemo(() => {
     if (selectedGen === null || !allPokemon) return [];
@@ -73,9 +73,9 @@ export function GenerationDistributionChart({ data, height = 400 }: GenerationDi
     labels: sortedData.map((d) => getGenerationDisplayName(d.generationId)),
     datasets: [
       {
-        label: 'Pokémon',
+        label: 'Characters',
         data: sortedData.map((d) => d.count),
-        backgroundColor: sortedData.map((_, i) => GENERATION_COLORS[i % GENERATION_COLORS.length]),
+        backgroundColor: sortedData.map((_, i) => ERA_COLORS[i % ERA_COLORS.length]),
         borderColor: 'rgba(255, 255, 255, 0.1)',
         borderWidth: 1,
         borderRadius: 8,
@@ -112,8 +112,8 @@ export function GenerationDistributionChart({ data, height = 400 }: GenerationDi
         callbacks: {
           label: (context: any) => {
             const label = showValues
-              ? `${context.parsed.y} Pokémon`
-              : `${context.parsed.y} Pokémon`;
+              ? `${context.parsed.y} characters`
+              : `${context.parsed.y} characters`;
             return label;
           },
         },
@@ -160,11 +160,11 @@ export function GenerationDistributionChart({ data, height = 400 }: GenerationDi
         <Bar data={chartData} options={options} />
       </div>
 
-      {/* Modal with Pokémon list for selected generation */}
-      <PokemonListModal
+      {/* Modal with character list for selected era */}
+      <CharacterListModal
         isOpen={selectedGen !== null}
         onClose={() => setSelectedGen(null)}
-        title={`${selectedGen ? getGenerationDisplayName(selectedGen) : ''} Pokémon`}
+        title={`${selectedGen ? getGenerationDisplayName(selectedGen) : ''} Characters`}
         pokemon={pokemonByGen}
       />
     </>

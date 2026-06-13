@@ -2,19 +2,19 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Heart, Search, X } from 'lucide-react';
-import { useAllPokemon } from '@/hooks/usePokemon';
+import { useAllCharacters } from '@/hooks/useCharacters';
 import { capitalize } from '@/utils/pokemonUtils';
 import { ChartSkeleton } from '@/components/common/Skeleton';
 import { useAppStore } from '@/store/useAppStore';
 import { t } from '@/constants/translations';
 import { getTypeIcon } from '@/constants/typeIcons';
-import { GenerationBadge } from '@/components/common/GenerationBadge';
+import { EraBadge } from '@/components/common/EraBadge';
 
 const ITEMS_PER_PAGE = 20;
 
 export function FavoritesPage() {
   const navigate = useNavigate();
-  const { data: pokemonList, isLoading } = useAllPokemon();
+  const { data: pokemonList, isLoading } = useAllCharacters();
   const [search, setSearch] = useState('');
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const { language, favorites, removeFavorite } = useAppStore();
@@ -101,12 +101,12 @@ export function FavoritesPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: (index % ITEMS_PER_PAGE) * 0.03 }}
-                onClick={() => navigate(`/pokemon/${pokemon.id}`)}
+                onClick={() => navigate(`/character/${pokemon.id}`)}
                 className="glass-card-hover p-3 sm:p-4 text-left w-full cursor-pointer group relative"
               >
                 {/* Generation Badge */}
                 <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2">
-                  <GenerationBadge pokemonId={pokemon.id} size="sm" />
+                  <EraBadge pokemonId={pokemon.id} size="sm" />
                 </div>
 
                 {/* Remove favorite button */}

@@ -13,8 +13,8 @@
  */
 
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
-import { useAllPokemon } from '@/hooks/usePokemon';
-import { useAllGenerations } from '@/hooks/useGenerations';
+import { useAllCharacters } from '@/hooks/useCharacters';
+import { useAllEras } from '@/hooks/useEras';
 import type { PokemonWithStats } from '@/types/pokemon';
 import type { GenerationInfo } from '@/types/generations';
 
@@ -40,8 +40,8 @@ interface PokemonContextValue {
 const PokemonContext = createContext<PokemonContextValue | null>(null);
 
 export function PokemonProvider({ children }: { children: ReactNode }) {
-  const { data: allPokemon, isLoading, error } = useAllPokemon();
-  const { data: generations, isLoading: generationsLoading } = useAllGenerations();
+  const { data: allPokemon, isLoading, error } = useAllCharacters();
+  const { data: generations, isLoading: generationsLoading } = useAllEras();
 
   const value = useMemo<PokemonContextValue>(() => {
     // Build lookup maps
@@ -83,8 +83,8 @@ export function usePokemonContext(): PokemonContextValue {
   const context = useContext(PokemonContext);
   if (!context) {
     // Fallback: use hooks directly if no provider
-    const { data: allPokemon, isLoading, error } = useAllPokemon();
-    const { data: generations, isLoading: generationsLoading } = useAllGenerations();
+    const { data: allPokemon, isLoading, error } = useAllCharacters();
+    const { data: generations, isLoading: generationsLoading } = useAllEras();
 
     const pokemonById = new Map<number, PokemonWithStats>();
     const pokemonByName = new Map<string, PokemonWithStats>();

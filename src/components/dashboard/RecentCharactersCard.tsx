@@ -1,31 +1,30 @@
 /**
- * Recent Pokémon Viewed Card - Inspired by Matches from reference
- * Shows recently viewed Pokémon as mini cards
+ * Recent Characters Viewed Card - Shows recently viewed characters as mini cards
  */
 
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAllPokemon } from '@/hooks/usePokemon';
+import { useAllCharacters } from '@/hooks/useCharacters';
 import { useAppStore } from '@/store/useAppStore';
 import { capitalize, formatPokemonId } from '@/utils/pokemonUtils';
-import { TYPE_COLORS } from '@/constants';
+import { RACE_COLORS } from '@/constants';
 import { Clock, ChevronRight } from 'lucide-react';
-import { GenerationBadge } from '@/components/common/GenerationBadge';
+import { EraBadge } from '@/components/common/EraBadge';
 import { t } from '@/constants/translations';
 
-export function RecentPokemonCard() {
+export function RecentCharactersCard() {
   const navigate = useNavigate();
   const { history, language } = useAppStore();
-  const { data: allPokemon } = useAllPokemon();
+  const { data: allCharacters } = useAllCharacters();
 
-  const recentPokemon = useMemo(() => {
-    if (!allPokemon || history.length === 0) return [];
+  const recentCharacters = useMemo(() => {
+    if (!allCharacters || history.length === 0) return [];
     return history
       .slice(0, 4)
-      .map((id) => allPokemon.find((p) => p.id === id))
+      .map((id) => allCharacters.find((p) => p.id === id))
       .filter(Boolean);
-  }, [allPokemon, history]);
+  }, [allCharacters, history]);
 
   return (
     <motion.div
@@ -51,7 +50,7 @@ export function RecentPokemonCard() {
             <p className="text-[10px] text-text-secondary">{t('dashboard.yourHistory', language)}</p>
           </div>
         </div>
-        {recentPokemon.length > 0 && (
+        {recentCharacters.length > 0 && (
           <motion.button
             onClick={() => navigate('/explorer')}
             className="text-[11px] font-semibold px-3 py-1.5 rounded-full flex items-center gap-1"
@@ -68,8 +67,8 @@ export function RecentPokemonCard() {
         )}
       </div>
 
-      {/* Recent Pokémon Grid */}
-      {recentPokemon.length === 0 ? (
+      {/* Recent Characters Grid */}
+      {recentCharacters.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-8 text-center">
           <Clock size={32} className="text-text-secondary opacity-30 mb-2" />
           <p className="text-xs text-text-secondary opacity-50">{t('dashboard.noRecent', language)}</p>
@@ -77,16 +76,16 @@ export function RecentPokemonCard() {
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-2.5">
-          {recentPokemon.map((pokemon, i) => {
-            if (!pokemon) return null;
-            const typeColor = TYPE_COLORS[pokemon.dominantType] || '#6c5ce7';
+          {recentCharacters.map((character, i) => {
+            if (!character) return null;
+            const typeColor = RACE_COLORS[character.dominantType] || '#6c5ce7';
             return (
               <motion.button
-                key={pokemon.id}
+                key={character.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + i * 0.08 }}
-                onClick={() => navigate(`/pokemon/${pokemon.id}`)}
+                onClick={() => navigate(`/character/${character.id}`)}
                 className="relative overflow-hidden rounded-2xl p-3 text-left group"
                 style={{
                   backgroundColor: `${typeColor}11`,
@@ -99,28 +98,28 @@ export function RecentPokemonCard() {
                 }}
                 whileTap={{ scale: 0.98 }}
               >
-                {/* Pokémon image */}
+                {/* Character image */}
                 <div className="flex items-center gap-2.5">
                   <motion.img
-                    src={pokemon.artworkUrl}
-                    alt={pokemon.name}
+                    src={character.artworkUrl}
+                    alt={character.name}
                     className="w-10 h-10 object-contain flex-shrink-0"
                     whileHover={{ scale: 1.2, rotate: 5 }}
                     transition={{ duration: 0.3 }}
                   />
                   <div className="min-w-0">
                     <p className="text-xs font-bold text-text-primary truncate">
-                      {capitalize(pokemon.name)}
+                      {capitalize(character.name)}
                     </p>
                     <p className="text-[9px] text-text-secondary font-mono">
-                      {formatPokemonId(pokemon.id)}
+                      {formatPokemonId(character.id)}
                     </p>
                   </div>
                 </div>
 
-                {/* Generation badge */}
+                {/* Era badge */}
                 <div className="absolute top-2 right-2">
-                  <GenerationBadge pokemonId={pokemon.id} size="sm" />
+                  <EraBadge pokemonId={character.id} size="sm" />
                 </div>
               </motion.button>
             );

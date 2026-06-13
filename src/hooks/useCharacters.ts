@@ -1,5 +1,5 @@
 /**
- * Pokémon Data Hooks
+ * Character Data Hooks
  * 
  * Architecture Decision:
  * We use TanStack Query (React Query) for server state management.
@@ -21,15 +21,16 @@ import {
   fetchEvolutionChain,
   fetchMultiplePokemon,
 } from '@/services/pokemonApi';
-import { enrichPokemon, computeTypeDistribution, computeHeightDistribution, computeWeightDistribution, computeExperienceDistribution, getTopPokemonByStat, generateInsights, computeTypeAverages } from '@/utils/pokemonUtils';
+import { enrichPokemon, computeTypeDistribution, computeHeightDistribution, computeWeightDistribution, computeExperienceDistribution, getTopPokemonByStat, generateInsights, computeTypeAverages, getZeldaImageUrl } from '@/utils/pokemonUtils';
+import { findCompendiumImages } from '@/services/compendium.service';
 import { STALE_TIME } from '@/constants';
 import { cacheManager } from '@/cache/cacheManager';
 import type { PokemonStats, PokemonWithStats } from '@/types/pokemon';
 
 /**
- * Hook to fetch all Pokémon list (names and URLs).
+ * Hook to fetch all characters list (names and URLs).
  */
-export function usePokemonList() {
+export function useCharacterList() {
   return useQuery({
     queryKey: ['pokemon-list'],
     queryFn: fetchPokemonList,
@@ -38,9 +39,9 @@ export function usePokemonList() {
 }
 
 /**
- * Hook to fetch a single Pokémon by ID.
+ * Hook to fetch a single character by ID.
  */
-export function usePokemon(id: number | string) {
+export function useCharacter(id: number | string) {
   return useQuery({
     queryKey: ['pokemon', id],
     queryFn: () => fetchPokemon(id),
@@ -50,9 +51,9 @@ export function usePokemon(id: number | string) {
 }
 
 /**
- * Hook to fetch enriched Pokémon data with computed stats.
+ * Hook to fetch enriched character data with computed stats.
  */
-export function useEnrichedPokemon(id: number | string) {
+export function useEnrichedCharacter(id: number | string) {
   const query = useQuery({
     queryKey: ['pokemon', id],
     queryFn: () => fetchPokemon(id),
@@ -64,9 +65,9 @@ export function useEnrichedPokemon(id: number | string) {
 }
 
 /**
- * Hook to fetch Pokémon species data.
+ * Hook to fetch character species data.
  */
-export function usePokemonSpecies(id: number) {
+export function useCharacterSpecies(id: number) {
   return useQuery({
     queryKey: ['pokemon-species', id],
     queryFn: () => fetchPokemonSpecies(id),
@@ -76,9 +77,9 @@ export function usePokemonSpecies(id: number) {
 }
 
 /**
- * Hook to fetch evolution chain.
+ * Hook to fetch timeline chain.
  */
-export function useEvolutionChain(id: number) {
+export function useTimelineChain(id: number) {
   return useQuery({
     queryKey: ['evolution-chain', id],
     queryFn: () => fetchEvolutionChain(id),
@@ -89,37 +90,26 @@ export function useEvolutionChain(id: number) {
 
 // Cache key for storing enriched Pokémon data as a single blob
 // Uses a direct localStorage key (not prefixed) to avoid cacheManager version issues
-const ENRICHED_CACHE_KEY = 'dashdex_all_pokemon_cache';
+const ENRICHED_CACHE_KEY = 'hyruledex_all_pokemon_cache';
 const ENRICHED_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 /**
- * Saves enriched Pokémon data to localStorage as a single blob.
- * Stores ONLY the minimum data needed for the dashboard to render:
- * - id, name, types (names only), stats, computedStats, totalStats
- * - artwork URL (reconstructed from id)
- * - height, weight, base_experience
- * 
- * This keeps the blob small enough to fit in the 5MB localStorage quota
- * even with 1000+ Pokémon.
+ * Saves enriched character data to localStorage as a single blob.
+ * Stores ONLY the minimum data needed for the dashboard to render.
  */
 function saveEnrichedCache(data: PokemonWithStats[]): void {
   try {
-    // Ultra-lightweight: only store what's absolutely needed
     const lightweight = data.map(p => ({
       id: p.id,
       name: p.name,
-      // Store only type names, not full objects with URLs
       types: p.types.map(t => ({ slot: t.slot, type: { name: t.type.name } })),
-      // Store only the artwork URL (reconstructed from id)
-      artworkUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png`,
-      // Store only base stat values, not the full stat objects
+      artworkUrl: p.artworkUrl || getZeldaImageUrl(p.name, p.id),
       stats: p.stats.map(s => ({ base_stat: s.base_stat, stat: { name: s.stat.name } })),
       height: p.height,
       weight: p.weight,
       base_experience: p.base_experience,
       computedStats: p.computedStats,
       totalStats: p.totalStats,
-      // Store ability names for dashboard KPIs
       abilities: p.abilities.map(a => ({ ability: { name: a.ability.name } })),
     }));
     const entry = {
@@ -128,7 +118,7 @@ function saveEnrichedCache(data: PokemonWithStats[]): void {
       ttl: ENRICHED_CACHE_TTL,
     };
     const serialized = JSON.stringify(entry);
-    console.log(`[Cache] Saving enriched cache: ${(serialized.length / 1024 / 1024).toFixed(2)}MB for ${lightweight.length} Pokémon`);
+    console.log(`[Cache] Saving enriched cache: ${(serialized.length / 1024 / 1024).toFixed(2)}MB for ${lightweight.length} characters`);
     localStorage.setItem(ENRICHED_CACHE_KEY, serialized);
   } catch (e) {
     console.warn('[Cache] Failed to save enriched cache (may exceed quota):', e);
@@ -136,52 +126,50 @@ function saveEnrichedCache(data: PokemonWithStats[]): void {
 }
 
 /**
- * Loads enriched Pokémon data from localStorage.
+ * Loads enriched character data from localStorage.
  * Returns null if not found or expired.
- * Reconstructs full PokemonWithStats objects from the lightweight cache.
  */
 function loadEnrichedCache(): PokemonWithStats[] | null {
   try {
     const raw = localStorage.getItem(ENRICHED_CACHE_KEY);
     if (!raw) return null;
     const entry = JSON.parse(raw);
-    // Check TTL
     if (Date.now() - entry.timestamp > entry.ttl) {
       localStorage.removeItem(ENRICHED_CACHE_KEY);
       return null;
     }
-    // Reconstruct full PokemonWithStats objects from lightweight cache
-    return entry.data.map((p: any) => ({
-      id: p.id,
-      name: p.name,
-      types: p.types,
-      // Reconstruct sprites from artworkUrl
-      sprites: {
-        front_default: p.artworkUrl,
-        front_shiny: p.artworkUrl,
-        other: {
-          'official-artwork': {
-            front_default: p.artworkUrl,
-            front_shiny: p.artworkUrl,
-          },
-          showdown: {
-            front_default: p.artworkUrl,
+    return entry.data.map((p: any) => {
+      const imageUrl = p.artworkUrl || getZeldaImageUrl(p.name, p.id);
+      return {
+        id: p.id,
+        name: p.name,
+        types: p.types,
+        sprites: {
+          front_default: imageUrl,
+          front_shiny: imageUrl,
+          other: {
+            'official-artwork': {
+              front_default: imageUrl,
+              front_shiny: imageUrl,
+            },
+            showdown: {
+              front_default: imageUrl,
+            },
           },
         },
-      },
-      stats: p.stats,
-      height: p.height,
-      weight: p.weight,
-      base_experience: p.base_experience,
-      // Reconstruct abilities from cached data (needed for dashboard KPIs)
-      abilities: p.abilities || [],
-      species: { name: p.name, url: '' },
-      computedStats: p.computedStats,
-      totalStats: p.totalStats,
-      dominantType: p.types[0]?.type?.name || 'normal',
-      imageUrl: p.artworkUrl,
-      artworkUrl: p.artworkUrl,
-    }));
+        stats: p.stats,
+        height: p.height,
+        weight: p.weight,
+        base_experience: p.base_experience,
+        abilities: p.abilities || [],
+        species: { name: p.name, url: '' },
+        computedStats: p.computedStats,
+        totalStats: p.totalStats,
+        dominantType: p.types[0]?.type?.name || 'normal',
+        imageUrl,
+        artworkUrl: imageUrl,
+      };
+    });
   } catch {
     localStorage.removeItem(ENRICHED_CACHE_KEY);
     return null;
@@ -189,23 +177,18 @@ function loadEnrichedCache(): PokemonWithStats[] | null {
 }
 
 /**
- * Hook to fetch all Pokémon with enriched data for the dashboard.
+ * Hook to fetch all characters with enriched data for the dashboard.
  * This is the main data hook used across the application.
  * 
- * Dynamically loads ALL Pokémon from PokéAPI using the actual count
- * returned by the API, ensuring future generations are automatically included.
- * Extracts real Pokémon IDs from the API URLs instead of using sequential IDs.
+ * Fetches ALL characters from the Zelda Fan API.
  * 
  * Performance Optimization:
  * - After the first successful load, saves lightweight enriched data as a single blob
- *   in localStorage under 'dashdex_all_pokemon_cache'
+ *   in localStorage under 'hyruledex_all_pokemon_cache'
  * - On subsequent full reloads, reads this blob synchronously as initialData
- * - With initialData present, TanStack Query sets staleTime=Infinity and
- *   refetchOnMount=false, meaning ZERO API calls on full reload
  * - TTL of 24h ensures data is eventually refreshed
  */
-export function useAllPokemon() {
-  // Try to get cached enriched data synchronously from localStorage (single blob)
+export function useAllCharacters() {
   const cachedEnriched = loadEnrichedCache();
   const hasCache = cachedEnriched !== null && cachedEnriched.length > 0;
 
@@ -213,19 +196,52 @@ export function useAllPokemon() {
     queryKey: ['all-pokemon'],
     queryFn: async () => {
       const list = await fetchPokemonList();
-      // Extract real Pokémon IDs from the API URLs
-      // This handles gaps in the PokéAPI ID sequence correctly
       const ids = list.results.map((result) => {
+        // Use the numeric id from the provider if available (Zelda Fan API provides it)
+        if (result.id !== undefined && result.id > 0) return result.id;
+        // Fallback: extract from URL (PokeAPI format: /pokemon/{id}/)
         const parts = result.url.split('/');
         return parseInt(parts[parts.length - 2], 10);
       }).filter((id) => !isNaN(id) && id > 0);
       
       const pokemonList = await fetchMultiplePokemon(ids);
-      const enriched = pokemonList.map(enrichPokemon);
       
-      // Save lightweight enriched data as a single blob for instant reload next time
+      // Try to get real images from Hyrule Compendium API
+      const names = pokemonList.map((p) => p.name);
+      let compendiumImages = new Map<string, string>();
+      try {
+        compendiumImages = await findCompendiumImages(names);
+        console.log(`[Compendium] Found ${compendiumImages.size} images out of ${names.length} characters`);
+      } catch (e) {
+        console.warn('[Compendium] Failed to fetch images:', e);
+      }
+      
+      const enriched = pokemonList.map((p) => {
+        const enriched_p = enrichPokemon(p);
+        // Use Compendium image if available, otherwise generate placeholder
+        const compendiumUrl = compendiumImages.get(p.name);
+        const imageUrl = compendiumUrl || getZeldaImageUrl(enriched_p.name, enriched_p.id);
+        return {
+          ...enriched_p,
+          imageUrl,
+          artworkUrl: imageUrl,
+          sprites: {
+            front_default: imageUrl,
+            front_shiny: imageUrl,
+            other: {
+              'official-artwork': {
+                front_default: imageUrl,
+                front_shiny: imageUrl,
+              },
+              showdown: {
+                front_default: imageUrl,
+              },
+            },
+          },
+        };
+      });
+      
       saveEnrichedCache(enriched);
-      
       return enriched;
     },
     staleTime: hasCache ? Infinity : STALE_TIME,
@@ -239,7 +255,7 @@ export function useAllPokemon() {
  * Hook to get dashboard KPIs.
  */
 export function useDashboardKPIs() {
-  const { data: pokemonList, isLoading, error } = useAllPokemon();
+  const { data: pokemonList, isLoading, error } = useAllCharacters();
 
   if (!pokemonList) {
     return { kpis: null, isLoading, error };
@@ -273,7 +289,7 @@ export function useDashboardKPIs() {
  * Hook to get type distribution data.
  */
 export function useTypeDistribution() {
-  const { data: pokemonList } = useAllPokemon();
+  const { data: pokemonList } = useAllCharacters();
   if (!pokemonList) return null;
   return computeTypeDistribution(pokemonList);
 }
@@ -282,7 +298,7 @@ export function useTypeDistribution() {
  * Hook to get height distribution data.
  */
 export function useHeightDistribution() {
-  const { data: pokemonList } = useAllPokemon();
+  const { data: pokemonList } = useAllCharacters();
   if (!pokemonList) return null;
   return computeHeightDistribution(pokemonList);
 }
@@ -291,7 +307,7 @@ export function useHeightDistribution() {
  * Hook to get weight distribution data.
  */
 export function useWeightDistribution() {
-  const { data: pokemonList } = useAllPokemon();
+  const { data: pokemonList } = useAllCharacters();
   if (!pokemonList) return null;
   return computeWeightDistribution(pokemonList);
 }
@@ -300,16 +316,16 @@ export function useWeightDistribution() {
  * Hook to get experience distribution data.
  */
 export function useExperienceDistribution() {
-  const { data: pokemonList } = useAllPokemon();
+  const { data: pokemonList } = useAllCharacters();
   if (!pokemonList) return null;
   return computeExperienceDistribution(pokemonList);
 }
 
 /**
- * Hook to get top Pokémon by a specific stat.
+ * Hook to get top characters by a specific stat.
  */
-export function useTopPokemon(statName: keyof PokemonStats, limit: number = 20) {
-  const { data: pokemonList } = useAllPokemon();
+export function useTopCharacters(statName: keyof PokemonStats, limit: number = 20) {
+  const { data: pokemonList } = useAllCharacters();
   if (!pokemonList) return null;
   return getTopPokemonByStat(pokemonList, statName, limit);
 }
@@ -318,7 +334,7 @@ export function useTopPokemon(statName: keyof PokemonStats, limit: number = 20) 
  * Hook to get generated insights.
  */
 export function useInsights() {
-  const { data: pokemonList } = useAllPokemon();
+  const { data: pokemonList } = useAllCharacters();
   if (!pokemonList) return null;
   return generateInsights(pokemonList);
 }
@@ -327,7 +343,7 @@ export function useInsights() {
  * Hook to get type averages.
  */
 export function useTypeAverages() {
-  const { data: pokemonList } = useAllPokemon();
+  const { data: pokemonList } = useAllCharacters();
   if (!pokemonList) return null;
   return computeTypeAverages(pokemonList);
 }

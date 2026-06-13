@@ -6,7 +6,7 @@ import { capitalize } from '@/utils/pokemonUtils';
 import { getTypeIcon } from '@/constants/typeIcons';
 import type { PokemonWithStats } from '@/types/pokemon';
 
-interface PokemonListModalProps {
+interface CharacterListModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
@@ -17,7 +17,7 @@ interface PokemonListModalProps {
 
 const ITEMS_PER_PAGE = 5;
 
-export function PokemonListModal({ isOpen, onClose, title, pokemon, statLabel, statValue }: PokemonListModalProps) {
+export function CharacterListModal({ isOpen, onClose, title, pokemon, statLabel, statValue }: CharacterListModalProps) {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -42,7 +42,7 @@ export function PokemonListModal({ isOpen, onClose, title, pokemon, statLabel, s
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Overlay - z-index alto para cubrir todo */}
+          {/* Overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -52,7 +52,7 @@ export function PokemonListModal({ isOpen, onClose, title, pokemon, statLabel, s
             onClick={onClose}
           />
 
-          {/* Modal - centrado perfecto en cualquier pantalla */}
+          {/* Modal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.92, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -105,7 +105,7 @@ export function PokemonListModal({ isOpen, onClose, title, pokemon, statLabel, s
                     className="p-8 text-center"
                     style={{ color: 'var(--color-text-secondary, #94a3b8)' }}
                   >
-                    No Pokémon found
+                    No creatures found
                   </div>
                 ) : (
                   <div className="space-y-1">
@@ -113,7 +113,7 @@ export function PokemonListModal({ isOpen, onClose, title, pokemon, statLabel, s
                       <button
                         key={p.id}
                         onClick={() => {
-                          navigate(`/pokemon/${p.id}`);
+                          navigate(`/character/${p.id}`);
                           onClose();
                         }}
                         className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left group"
@@ -190,7 +190,7 @@ export function PokemonListModal({ isOpen, onClose, title, pokemon, statLabel, s
                   className="text-xs"
                   style={{ color: 'var(--color-text-secondary, #94a3b8)' }}
                 >
-                  {pokemon.length} Pokémon
+                  {pokemon.length} Creatures
                 </span>
 
                 {totalPages > 1 && (

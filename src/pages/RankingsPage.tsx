@@ -2,23 +2,23 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Swords, Shield, Zap, Heart, Brain, Eye, Trophy, ChevronDown, Search } from 'lucide-react';
-import { useAllPokemon } from '@/hooks/usePokemon';
+import { useAllCharacters } from '@/hooks/useCharacters';
 import { capitalize } from '@/utils/pokemonUtils';
 import { ChartSkeleton } from '@/components/common/Skeleton';
 import { useAppStore } from '@/store/useAppStore';
 import { t } from '@/constants/translations';
 import { getTypeIcon } from '@/constants/typeIcons';
-import { GenerationBadge } from '@/components/common/GenerationBadge';
+import { EraBadge } from '@/components/common/EraBadge';
 import type { PokemonWithStats } from '@/types/pokemon';
 
 type StatKey = 'hp' | 'attack' | 'defense' | 'special-attack' | 'special-defense' | 'speed';
 
 const STAT_OPTIONS: { key: StatKey; label: string; icon: React.ComponentType<{ size?: number }> }[] = [
-  { key: 'hp', label: 'HP', icon: Heart },
-  { key: 'attack', label: 'Attack', icon: Swords },
+  { key: 'hp', label: 'Hearts', icon: Heart },
+  { key: 'attack', label: 'Strength', icon: Swords },
   { key: 'defense', label: 'Defense', icon: Shield },
-  { key: 'special-attack', label: 'Sp. Atk', icon: Brain },
-  { key: 'special-defense', label: 'Sp. Def', icon: Eye },
+  { key: 'special-attack', label: 'Wisdom', icon: Brain },
+  { key: 'special-defense', label: 'Spirit', icon: Eye },
   { key: 'speed', label: 'Speed', icon: Zap },
 ];
 
@@ -42,7 +42,7 @@ function RankingRow({ pokemon, rank, statKey, statLabel, language }: {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: (rank % ITEMS_PER_PAGE) * 0.02 }}
-      onClick={() => navigate(`/pokemon/${pokemon.id}`)}
+      onClick={() => navigate(`/character/${pokemon.id}`)}
       className="w-full glass-card-hover p-3 sm:p-4 text-left cursor-pointer group"
     >
       <div className="flex items-center gap-3 sm:gap-4">
@@ -79,7 +79,7 @@ function RankingRow({ pokemon, rank, statKey, statLabel, language }: {
             <span className="text-[10px] sm:text-xs text-text-secondary flex-shrink-0">
               #{String(pokemon.id).padStart(3, '0')}
             </span>
-            <GenerationBadge pokemonId={pokemon.id} size="sm" />
+            <EraBadge pokemonId={pokemon.id} size="sm" />
           </div>
           <div className="flex gap-1 mt-0.5 sm:mt-1 flex-wrap">
             {pokemon.types.map((t) => {
@@ -115,7 +115,7 @@ function RankingRow({ pokemon, rank, statKey, statLabel, language }: {
 }
 
 export function RankingsPage() {
-  const { data: pokemonList, isLoading } = useAllPokemon();
+  const { data: pokemonList, isLoading } = useAllCharacters();
   const [selectedStat, setSelectedStat] = useState<StatKey>('attack');
   const [search, setSearch] = useState('');
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);

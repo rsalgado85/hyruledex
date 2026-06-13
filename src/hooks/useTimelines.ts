@@ -1,8 +1,8 @@
 /**
- * Evolution Hook
+ * Timeline Hook
  * 
- * Provides React hooks for fetching and managing Pokémon evolution data.
- * Supports complex evolution trees with caching via TanStack Query.
+ * Provides React hooks for fetching and managing character timeline/evolution data.
+ * Supports complex timeline trees with caching via TanStack Query.
  */
 
 import { useQuery } from '@tanstack/react-query';
@@ -11,9 +11,9 @@ import { STALE_TIME } from '@/constants';
 import type { EvolutionChainData, EvolutionNode } from '@/services/evolution.service';
 
 /**
- * Hook to fetch an evolution chain by its ID.
+ * Hook to fetch a timeline chain by its ID.
  */
-export function useEvolutionChain(chainId: number) {
+export function useTimelineChain(chainId: number) {
   return useQuery<EvolutionChainData | null>({
     queryKey: ['evolution-chain', chainId],
     queryFn: () => fetchEvolutionChain(chainId),
@@ -24,9 +24,9 @@ export function useEvolutionChain(chainId: number) {
 }
 
 /**
- * Hook to fetch an evolution chain by a Pokémon's species ID.
+ * Hook to fetch a timeline chain by a character's species ID.
  */
-export function useEvolutionChainBySpecies(speciesId: number) {
+export function useTimelineChainBySpecies(speciesId: number) {
   return useQuery<EvolutionChainData | null>({
     queryKey: ['evolution-chain-by-species', speciesId],
     queryFn: () => fetchEvolutionChainBySpeciesId(speciesId),
@@ -37,18 +37,18 @@ export function useEvolutionChainBySpecies(speciesId: number) {
 }
 
 /**
- * Hook to get the flattened evolution list for a Pokémon.
- * Returns an ordered array of species names in the evolution chain.
+ * Hook to get the flattened timeline list for a character.
+ * Returns an ordered array of species names in the timeline chain.
  */
-export function useEvolutionList(speciesId: number) {
-  const { data: chain, isLoading, error } = useEvolutionChainBySpecies(speciesId);
+export function useTimelineList(speciesId: number) {
+  const { data: chain, isLoading, error } = useTimelineChainBySpecies(speciesId);
 
   const evolutionList = chain
     ? flattenEvolutionChain(chain.chain)
     : [];
 
   return {
-    evolutionList,
+    timelineList: evolutionList,
     chain,
     isLoading,
     error,
@@ -56,10 +56,10 @@ export function useEvolutionList(speciesId: number) {
 }
 
 /**
- * Hook to check if a Pokémon can evolve further.
+ * Hook to check if a character can evolve further.
  */
 export function useCanEvolve(speciesName: string, speciesId: number) {
-  const { data: chain } = useEvolutionChainBySpecies(speciesId);
+  const { data: chain } = useTimelineChainBySpecies(speciesId);
 
   if (!chain) return { canEvolve: false, isLoading: true };
 
@@ -71,22 +71,22 @@ export function useCanEvolve(speciesName: string, speciesId: number) {
 }
 
 /**
- * Hook to get evolution chain data enriched with Pokémon images.
- * Returns evolution nodes with image URLs for rendering evolution trees.
+ * Hook to get timeline chain data enriched with character images.
+ * Returns timeline nodes with image URLs for rendering timeline trees.
  */
-export function useEvolutionWithImages(
+export function useTimelineWithImages(
   speciesId: number,
-  pokemonImageMap: Map<string, { id: number; imageUrl: string; artworkUrl: string; types: { type: { name: string } }[] }>
+  characterImageMap: Map<string, { id: number; imageUrl: string; artworkUrl: string; types: { type: { name: string } }[] }>
 ) {
-  const { data: chain, isLoading, error } = useEvolutionChainBySpecies(speciesId);
+  const { data: chain, isLoading, error } = useTimelineChainBySpecies(speciesId);
 
-  if (!chain || !pokemonImageMap) {
-    return { evolutionData: null, isLoading, error };
+  if (!chain || !characterImageMap) {
+    return { timelineData: null, isLoading, error };
   }
 
-  const evolutionData = chain.all_species
+  const timelineData = chain.all_species
     .map((name) => {
-      const p = pokemonImageMap.get(name.toLowerCase());
+      const p = characterImageMap.get(name.toLowerCase());
       return {
         name,
         id: p?.id ?? 0,
@@ -96,5 +96,5 @@ export function useEvolutionWithImages(
     })
     .filter((e) => e.id > 0);
 
-  return { evolutionData, chain, isLoading, error };
+  return { timelineData, chain, isLoading, error };
 }

@@ -1,18 +1,17 @@
 /**
- * Top Generation Card - Inspired by Top Maps from reference
- * Shows the most popular Pokémon generation with a circular popularity indicator
+ * Top Era Card - Shows the most popular era with a circular popularity indicator
  */
 
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
-import { useAllGenerations } from '@/hooks/useGenerations';
-import { useAllPokemon } from '@/hooks/usePokemon';
+import { useAllEras } from '@/hooks/useEras';
+import { useAllCharacters } from '@/hooks/useCharacters';
 import { capitalize } from '@/utils/pokemonUtils';
 import { Globe } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { t } from '@/constants/translations';
 
-const GENERATION_COLORS: Record<string, string> = {
+const ERA_COLORS: Record<string, string> = {
   'generation-i': 'linear-gradient(135deg, #667eea, #764ba2)',
   'generation-ii': 'linear-gradient(135deg, #f093fb, #f5576c)',
   'generation-iii': 'linear-gradient(135deg, #4facfe, #00f2fe)',
@@ -24,19 +23,19 @@ const GENERATION_COLORS: Record<string, string> = {
   'generation-ix': 'linear-gradient(135deg, #f5576c, #ff6f00)',
 };
 
-const GENERATION_NAMES: Record<string, string> = {
-  'generation-i': 'Kanto',
-  'generation-ii': 'Johto',
-  'generation-iii': 'Hoenn',
-  'generation-iv': 'Sinnoh',
-  'generation-v': 'Unova',
-  'generation-vi': 'Kalos',
-  'generation-vii': 'Alola',
-  'generation-viii': 'Galar',
-  'generation-ix': 'Paldea',
+const ERA_NAMES: Record<string, string> = {
+  'generation-i': 'The Legend of Zelda',
+  'generation-ii': 'Zelda II: Adventure of Link',
+  'generation-iii': 'A Link to the Past',
+  'generation-iv': "Link's Awakening",
+  'generation-v': 'Ocarina of Time',
+  'generation-vi': "Majora's Mask",
+  'generation-vii': 'Oracle of Seasons',
+  'generation-viii': 'The Wind Waker',
+  'generation-ix': 'Four Swords',
 };
 
-const GENERATION_NUMBERS: Record<string, string> = {
+const ERA_NUMBERS: Record<string, string> = {
   'generation-i': 'I',
   'generation-ii': 'II',
   'generation-iii': 'III',
@@ -48,41 +47,41 @@ const GENERATION_NUMBERS: Record<string, string> = {
   'generation-ix': 'IX',
 };
 
-export function TopGenerationCard() {
-  const { data: generations } = useAllGenerations();
-  const { data: allPokemon } = useAllPokemon();
+export function TopEraCard() {
+  const { data: generations } = useAllEras();
+  const { data: allCharacters } = useAllCharacters();
   const { language } = useAppStore();
 
-  const topGeneration = useMemo(() => {
-    if (!generations || !allPokemon) return null;
+  const topEra = useMemo(() => {
+    if (!generations || !allCharacters) return null;
 
-    // Count Pokémon per generation
+    // Count characters per era
     const genCounts: Record<string, number> = {};
     for (const gen of generations) {
       genCounts[gen.name] = gen.pokemonSpecies.length;
     }
 
-    // Find the generation with the most Pokémon
+    // Find the era with the most characters
     const sorted = Object.entries(genCounts).sort(([, a], [, b]) => b - a);
     if (sorted.length === 0) return null;
 
     const topGenName = sorted[0][0];
     const topGenCount = sorted[0][1];
-    const totalPokemon = allPokemon.length;
-    const popularity = Math.round((topGenCount / totalPokemon) * 100);
+    const totalCharacters = allCharacters.length;
+    const popularity = Math.round((topGenCount / totalCharacters) * 100);
 
     return {
       name: topGenName,
-      displayName: GENERATION_NAMES[topGenName] || capitalize(topGenName.replace('generation-', 'Gen ')),
+      displayName: ERA_NAMES[topGenName] || capitalize(topGenName.replace('generation-', 'Game ')),
       count: topGenCount,
-      total: totalPokemon,
+      total: totalCharacters,
       popularity,
-      gradient: GENERATION_COLORS[topGenName] || 'linear-gradient(135deg, #667eea, #764ba2)',
-      genNumber: GENERATION_NUMBERS[topGenName] || '?',
+      gradient: ERA_COLORS[topGenName] || 'linear-gradient(135deg, #667eea, #764ba2)',
+      eraNumber: ERA_NUMBERS[topGenName] || '?',
     };
-  }, [generations, allPokemon]);
+  }, [generations, allCharacters]);
 
-  if (!topGeneration) {
+  if (!topEra) {
     return (
       <div className="rounded-[32px] p-6 h-full" style={{
         background: 'rgba(255,255,255,0.04)',
@@ -95,7 +94,7 @@ export function TopGenerationCard() {
     );
   }
 
-  const popularityColor = topGeneration.popularity >= 20 ? '#6c5ce7' : topGeneration.popularity >= 10 ? '#fdcb6e' : '#e17055';
+  const popularityColor = topEra.popularity >= 20 ? '#6c5ce7' : topEra.popularity >= 10 ? '#fdcb6e' : '#e17055';
 
   return (
     <motion.div
@@ -131,17 +130,17 @@ export function TopGenerationCard() {
 
       {/* Content */}
       <div className="flex items-center gap-5 relative z-10">
-        {/* Generation visual - gradient with roman numeral */}
+        {/* Era visual - gradient with roman numeral */}
         <div className="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 relative">
           <div
             className="absolute inset-0"
             style={{
-              background: topGeneration.gradient,
+              background: topEra.gradient,
             }}
           />
           <div className="absolute inset-0 flex items-center justify-center">
             <span className="text-3xl font-black text-white/80 drop-shadow-lg">
-              {topGeneration.genNumber}
+              {topEra.eraNumber}
             </span>
           </div>
           {/* Decorative dots */}
@@ -151,16 +150,16 @@ export function TopGenerationCard() {
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <h4 className="text-lg font-black text-text-primary">{topGeneration.displayName}</h4>
+          <h4 className="text-lg font-black text-text-primary">{topEra.displayName}</h4>
           <p className="text-xs text-text-secondary mt-0.5">
-            {topGeneration.count.toLocaleString()} {t('dashboard.pokemonCount', language)}
+            {topEra.count.toLocaleString()} {t('dashboard.pokemonCount', language)}
           </p>
           <div className="flex items-center gap-2 mt-2">
             <div className="flex-1 h-1.5 rounded-full" style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}>
               <motion.div
                 className="h-full rounded-full"
                 initial={{ width: 0 }}
-                animate={{ width: `${topGeneration.popularity}%` }}
+                animate={{ width: `${topEra.popularity}%` }}
                 transition={{ delay: 0.8, duration: 1, ease: 'easeOut' }}
                 style={{
                   backgroundColor: popularityColor,
@@ -168,7 +167,7 @@ export function TopGenerationCard() {
                 }}
               />
             </div>
-            <span className="text-[10px] font-bold text-text-secondary">{topGeneration.popularity}%</span>
+            <span className="text-[10px] font-bold text-text-secondary">{topEra.popularity}%</span>
           </div>
         </div>
 
@@ -187,15 +186,15 @@ export function TopGenerationCard() {
               stroke={popularityColor}
               strokeWidth="6"
               strokeLinecap="round"
-              strokeDasharray={`${(topGeneration.popularity / 100) * 264} 264`}
+              strokeDasharray={`${(topEra.popularity / 100) * 264} 264`}
               initial={{ strokeDasharray: '0 264' }}
-              animate={{ strokeDasharray: `${(topGeneration.popularity / 100) * 264} 264` }}
+              animate={{ strokeDasharray: `${(topEra.popularity / 100) * 264} 264` }}
               transition={{ delay: 1, duration: 1.5, ease: 'easeOut' }}
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="text-sm font-black" style={{ color: popularityColor }}>
-              {topGeneration.popularity}%
+              {topEra.popularity}%
             </span>
             <span className="text-[7px] text-text-secondary font-semibold uppercase tracking-wider mt-[-1px]">
               {t('dashboard.popularity', language)}

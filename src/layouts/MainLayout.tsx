@@ -64,8 +64,8 @@ export function MainLayout() {
   }, [mobileMenuOpen]);
 
   const bgStyle = theme === 'light'
-    ? { background: '#f0f2f5' }
-    : { background: 'radial-gradient(ellipse at 20% 50%, #1e293b 0%, #111827 40%, #0f172a 70%, #0b1220 100%)' };
+    ? { background: '#F5F0E8' }
+    : { background: 'radial-gradient(ellipse at 20% 50%, #1E2A2D 0%, #162022 40%, #0F1416 70%, #0A0F10 100%)' };
 
   return (
     <div className="flex h-screen overflow-hidden" style={bgStyle}>
@@ -128,11 +128,11 @@ export function MainLayout() {
             <Menu size={22} />
           </button>
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#ff4d6d] to-[#d946ef] flex items-center justify-center p-1">
-              <img src="/logo.svg" alt="DASHDEX" className="w-full h-full object-contain" />
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#C6A15B] to-[#3E6B48] flex items-center justify-center p-1 shadow-sm shadow-[#C6A15B]/20">
+              <img src="/logo.svg" alt="HYRULEDEX" className="w-full h-full object-contain" />
             </div>
             <span className="text-base font-black tracking-tight" style={{ color: theme === 'light' ? '#1a1a2e' : '#ffffff' }}>
-              DASH<span className="text-[#ff4d6d]">DEX</span>
+              HYRULE<span className="text-[#C6A15B]">DEX</span>
             </span>
           </div>
           <div className="w-9" />
@@ -157,7 +157,7 @@ export function MainLayout() {
           borderTop: theme === 'light' ? '1px solid rgba(0,0,0,0.04)' : '1px solid rgba(255,255,255,0.04)',
         }}>
           <p className="text-xs" style={{ color: theme === 'light' ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.3)' }}>
-            &copy; {new Date().getFullYear()} DASHDEX - Pokédex Analytics. All rights reserved.
+            &copy; {new Date().getFullYear()} HyruleDex — Enciclopedia de Zelda. All rights reserved.
           </p>
         </footer>
       </div>

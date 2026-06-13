@@ -11,10 +11,10 @@ import {
 import { KPICard } from '@/components/common/KPICard';
 import { KPISkeleton } from '@/components/common/Skeleton';
 import { HeroCard } from '@/components/dashboard/HeroCard';
-import { TopMovesCard } from '@/components/dashboard/TopMovesCard';
-import { RecentPokemonCard } from '@/components/dashboard/RecentPokemonCard';
-import { TopGenerationCard } from '@/components/dashboard/TopGenerationCard';
-import { useDashboardKPIs, useAllPokemon } from '@/hooks/usePokemon';
+import { TopAbilitiesCard } from '@/components/dashboard/TopAbilitiesCard';
+import { RecentCharactersCard } from '@/components/dashboard/RecentCharactersCard';
+import { TopEraCard } from '@/components/dashboard/TopEraCard';
+import { useDashboardKPIs, useAllCharacters } from '@/hooks/useCharacters';
 import { capitalize } from '@/utils/pokemonUtils';
 import { useAppStore } from '@/store/useAppStore';
 import { t } from '@/constants/translations';
@@ -23,23 +23,23 @@ import { useMemo } from 'react';
 export function DashboardPage() {
   const navigate = useNavigate();
   const { kpis, isLoading } = useDashboardKPIs();
-  const { data: allPokemon } = useAllPokemon();
+  const { data: allCharacters } = useAllCharacters();
   const { language } = useAppStore();
 
-  // Create a map of pokemon id to image URL
-  const pokemonImageMap = useMemo(() => {
-    if (!allPokemon) return new Map<number, string>();
+  // Create a map of character id to image URL
+  const characterImageMap = useMemo(() => {
+    if (!allCharacters) return new Map<number, string>();
     const map = new Map<number, string>();
-    allPokemon.forEach((p) => {
+    allCharacters.forEach((p) => {
       map.set(p.id, p.artworkUrl);
     });
     return map;
-  }, [allPokemon]);
+  }, [allCharacters]);
 
-  // Calculate featured Pokémon ID (same logic as HeroCard)
-  const featuredPokemonId = useMemo(() => {
-    if (!allPokemon || allPokemon.length === 0) return undefined;
-    const sorted = [...allPokemon].sort((a, b) => {
+  // Calculate featured character ID
+  const featuredCharacterId = useMemo(() => {
+    if (!allCharacters || allCharacters.length === 0) return undefined;
+    const sorted = [...allCharacters].sort((a, b) => {
       const statDiff = (b.totalStats || 0) - (a.totalStats || 0);
       if (statDiff !== 0) return statDiff;
       return a.id - b.id;
@@ -50,7 +50,7 @@ export function DashboardPage() {
     );
     const selectedIndex = dayOfYear % topCandidates.length;
     return topCandidates[selectedIndex]?.id;
-  }, [allPokemon]);
+  }, [allCharacters]);
 
   if (isLoading || !kpis) {
     return (
@@ -88,8 +88,8 @@ export function DashboardPage() {
       value: capitalize(kpis.fastest?.name ?? ''),
       icon: Zap,
       subtitle: `${t('rankings.topSpeed', language)}: ${kpis.fastest?.value}`,
-      onClick: () => navigate(`/pokemon/${kpis.fastest?.id}`),
-      imageUrl: kpis.fastest?.id ? pokemonImageMap.get(kpis.fastest.id) : undefined,
+      onClick: () => navigate(`/character/${kpis.fastest?.id}`),
+      imageUrl: kpis.fastest?.id ? characterImageMap.get(kpis.fastest.id) : undefined,
       pokemonId: kpis.fastest?.id,
     },
     {
@@ -97,8 +97,8 @@ export function DashboardPage() {
       value: capitalize(kpis.strongest?.name ?? ''),
       icon: Swords,
       subtitle: `${t('rankings.topAttack', language)}: ${kpis.strongest?.value}`,
-      onClick: () => navigate(`/pokemon/${kpis.strongest?.id}`),
-      imageUrl: kpis.strongest?.id ? pokemonImageMap.get(kpis.strongest.id) : undefined,
+      onClick: () => navigate(`/character/${kpis.strongest?.id}`),
+      imageUrl: kpis.strongest?.id ? characterImageMap.get(kpis.strongest.id) : undefined,
       pokemonId: kpis.strongest?.id,
     },
     {
@@ -106,8 +106,8 @@ export function DashboardPage() {
       value: capitalize(kpis.toughest?.name ?? ''),
       icon: Shield,
       subtitle: `${t('rankings.topDefense', language)}: ${kpis.toughest?.value}`,
-      onClick: () => navigate(`/pokemon/${kpis.toughest?.id}`),
-      imageUrl: kpis.toughest?.id ? pokemonImageMap.get(kpis.toughest.id) : undefined,
+      onClick: () => navigate(`/character/${kpis.toughest?.id}`),
+      imageUrl: kpis.toughest?.id ? characterImageMap.get(kpis.toughest.id) : undefined,
       pokemonId: kpis.toughest?.id,
     },
   ];
@@ -130,12 +130,12 @@ export function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Hero Card - Takes 2/3 of the width */}
         <div className="lg:col-span-2">
-          <HeroCard pokemonId={featuredPokemonId} />
+          <HeroCard pokemonId={featuredCharacterId} />
         </div>
 
         {/* Top Moves Card - Takes 1/3 - Shows moves of the featured Pokémon */}
         <div className="lg:col-span-1">
-          <TopMovesCard pokemonId={featuredPokemonId} />
+          <TopAbilitiesCard pokemonId={featuredCharacterId} />
         </div>
       </div>
 
@@ -157,12 +157,12 @@ export function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Recent Pokémon Viewed - Takes 2/3 */}
         <div className="lg:col-span-2">
-          <RecentPokemonCard />
+          <RecentCharactersCard />
         </div>
 
         {/* Top Generation - Takes 1/3 */}
         <div className="lg:col-span-1">
-          <TopGenerationCard />
+          <TopEraCard />
         </div>
       </div>
 

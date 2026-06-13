@@ -1,50 +1,50 @@
 /**
- * GenerationBadge Component
+ * EraBadge Component
  * 
- * Displays a small badge showing which generation a Pokémon belongs to.
- * Uses the Pokémon's ID to determine the generation dynamically.
+ * Displays a small badge showing which era a character belongs to.
+ * Uses the character's ID to determine the era dynamically.
  * Styled as a compact, glassmorphism tag that fits anywhere.
  */
 
 import { useMemo } from 'react';
 import { getGenerationIdFromPokemonId, getGenerationDisplayName } from '@/services/generation.service';
 
-interface GenerationBadgeProps {
+interface EraBadgeProps {
   pokemonId: number;
   size?: 'sm' | 'md' | 'lg';
   showLabel?: boolean;
 }
 
-const GEN_COLORS: Record<number, string> = {
-  1: '#667eea',   // Kanto - purple
-  2: '#f5576c',   // Johto - pink
-  3: '#4facfe',   // Hoenn - blue
-  4: '#43e97b',   // Sinnoh - green
-  5: '#fa709a',   // Unova - rose
-  6: '#a18cd1',   // Kalos - lavender
-  7: '#fccb90',   // Alola - peach
-  8: '#e0c3fc',   // Galar - light purple
-  9: '#f5576c',   // Hisui - coral
-  10: '#ff6f00',  // Paldea - orange
+const ERA_COLORS: Record<number, string> = {
+  1: '#667eea',   // Era of Chaos - purple
+  2: '#f5576c',   // Era of Prosperity - pink
+  3: '#4facfe',   // Era of Decline - blue
+  4: '#43e97b',   // Era of Light - green
+  5: '#fa709a',   // Era of Shadow - rose
+  6: '#a18cd1',   // Era of Twilight - lavender
+  7: '#fccb90',   // Era of the Wild - peach
+  8: '#e0c3fc',   // Era of the Sky - light purple
+  9: '#f5576c',   // Era of the Ocean - coral
+  10: '#ff6f00',  // Era of the Ancients - orange
 };
 
-const GEN_SHORT: Record<number, string> = {
-  1: 'Gen I',
-  2: 'Gen II',
-  3: 'Gen III',
-  4: 'Gen IV',
-  5: 'Gen V',
-  6: 'Gen VI',
-  7: 'Gen VII',
-  8: 'Gen VIII',
-  9: 'Gen IX',
-  10: 'Gen X',
+const ERA_SHORT: Record<number, string> = {
+  1: 'Era I',
+  2: 'Era II',
+  3: 'Era III',
+  4: 'Era IV',
+  5: 'Era V',
+  6: 'Era VI',
+  7: 'Era VII',
+  8: 'Era VIII',
+  9: 'Era IX',
+  10: 'Era X',
 };
 
-export function GenerationBadge({ pokemonId, size = 'sm', showLabel = true }: GenerationBadgeProps) {
+export function EraBadge({ pokemonId, size = 'sm', showLabel = true }: EraBadgeProps) {
   const genId = useMemo(() => getGenerationIdFromPokemonId(pokemonId), [pokemonId]);
-  const color = GEN_COLORS[genId] || '#6c5ce7';
-  const shortLabel = GEN_SHORT[genId] || `Gen ${genId}`;
+  const color = ERA_COLORS[genId] || '#6c5ce7';
+  const shortLabel = ERA_SHORT[genId] || `Era ${genId}`;
   const fullLabel = getGenerationDisplayName(genId);
 
   const sizeClasses = {
@@ -62,7 +62,7 @@ export function GenerationBadge({ pokemonId, size = 'sm', showLabel = true }: Ge
         border: `1px solid ${color}33`,
       }}
       title={fullLabel}
-      aria-label={`Generation ${genId}: ${fullLabel}`}
+      aria-label={`Era ${genId}: ${fullLabel}`}
     >
       {/* Small dot indicator */}
       <span

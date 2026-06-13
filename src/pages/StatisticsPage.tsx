@@ -1,29 +1,21 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { useAllPokemon } from '@/hooks/usePokemon';
+import { useAllCharacters } from '@/hooks/useCharacters';
 import { ChartSkeleton } from '@/components/common/Skeleton';
-import { TypeDistributionChart } from '@/components/charts/TypeDistributionChart';
-import { GenerationDistributionChart } from '@/components/charts/GenerationDistributionChart';
+import { RaceDistributionChart } from '@/components/charts/RaceDistributionChart';
+import { EraDistributionChart } from '@/components/charts/EraDistributionChart';
 import { useAppStore } from '@/store/useAppStore';
 import { t } from '@/constants/translations';
-import { TYPE_COLORS } from '@/constants';
+import { RACE_COLORS } from '@/constants';
 import type { TypeDistribution } from '@/types/pokemon';
 
 function getGenerationId(pokemonId: number): number {
-  if (pokemonId <= 151) return 1;
-  if (pokemonId <= 251) return 2;
-  if (pokemonId <= 386) return 3;
-  if (pokemonId <= 493) return 4;
-  if (pokemonId <= 649) return 5;
-  if (pokemonId <= 721) return 6;
-  if (pokemonId <= 809) return 7;
-  if (pokemonId <= 898) return 8;
-  if (pokemonId <= 1010) return 9;
-  return 10;
+  // Zelda entities are mapped to games; use modulo to distribute
+  return (pokemonId % 19) + 1;
 }
 
 export function StatisticsPage() {
-  const { data: pokemonList, isLoading } = useAllPokemon();
+  const { data: pokemonList, isLoading } = useAllCharacters();
   const { language } = useAppStore();
 
   const typeDistribution: TypeDistribution[] = useMemo(() => {
@@ -39,7 +31,7 @@ export function StatisticsPage() {
         name,
         count,
         percentage: Math.round((count / pokemonList.length) * 100),
-        color: TYPE_COLORS[name] || '#666',
+        color: RACE_COLORS[name] || '#666',
       }))
       .sort((a, b) => b.count - a.count);
   }, [pokemonList]);
@@ -100,7 +92,7 @@ export function StatisticsPage() {
           className="glass-card p-3 sm:p-4 text-center"
         >
           <p className="text-xl sm:text-3xl font-black gradient-text">{totalPokemon}</p>
-          <p className="text-[10px] sm:text-xs text-text-secondary mt-0.5 sm:mt-1">{t('common.pokemon', language)}</p>
+          <p className="text-[10px] sm:text-xs text-text-secondary mt-0.5 sm:mt-1">{t('common.characters', language)}</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -129,9 +121,9 @@ export function StatisticsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="glass-card p-4 sm:p-6"
         >
-          <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">{t('stats.typeDistribution', language)}</h2>
+          <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">{t('stats.raceDistribution', language)}</h2>
           <div className="h-[300px] sm:h-[400px]">
-            <TypeDistributionChart data={typeDistribution} />
+            <RaceDistributionChart data={typeDistribution} />
           </div>
         </motion.div>
 
@@ -141,9 +133,9 @@ export function StatisticsPage() {
           transition={{ delay: 0.2 }}
           className="glass-card p-4 sm:p-6"
         >
-          <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">{t('stats.generationDistribution', language)}</h2>
+          <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">{t('stats.eraDistribution', language)}</h2>
           <div className="h-[300px] sm:h-[400px]">
-            <GenerationDistributionChart data={generationDistribution} />
+            <EraDistributionChart data={generationDistribution} />
           </div>
         </motion.div>
       </div>

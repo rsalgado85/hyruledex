@@ -1,7 +1,7 @@
 /**
  * RAWG Video Games Database Service
  *
- * Service layer for fetching Pokémon video game data from RAWG API.
+ * Service layer for fetching Zelda video game data from RAWG API.
  * Centralizes all API calls for the Videogames feature.
  *
  * Architecture:
@@ -79,8 +79,8 @@ export interface Platform {
 }
 
 /**
- * Fetches Pokémon games from RAWG API, ordered by release date (newest first).
- * Uses the 'pokemon' tag to filter only Pokémon-related games.
+ * Fetches Zelda games from RAWG API, ordered by release date (newest first).
+ * Uses the 'the-legend-of-zelda' tag to filter only Zelda-related games.
  */
 export async function fetchPokemonGames(
   page: number = 1,
@@ -93,7 +93,7 @@ export async function fetchPokemonGames(
     page: page.toString(),
     page_size: pageSize.toString(),
     ordering: '-released',
-    tags: 'pokemon',
+    tags: 'the-legend-of-zelda',
   });
 
   if (search) {

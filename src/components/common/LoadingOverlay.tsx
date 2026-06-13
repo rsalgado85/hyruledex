@@ -2,15 +2,15 @@
  * LoadingOverlay - Premium Loading Screen
  *
  * Premium gaming-style loading overlay that shows real-time progress
- * of Pokémon data loading by generation. Features:
- * - Animated Pokéball spinner
- * - Generation-by-generation progress bar
- * - Current generation being loaded with icon
+ * of character data loading. Features:
+ * - Animated spinner
+ * - Progress bar
  * - Smooth entrance/exit animations via Framer Motion
  * - Glassmorphism design with gradient accents
  *
- * Inspired by: Pokémon Scarlet & Violet loading screens,
- * Nintendo Switch startup animation, Valorant loading screens
+ * Can be used in two modes:
+ * 1. Full overlay with progress tracking (isVisible + progress props)
+ * 2. Simple centered spinner (no props, for Suspense fallback)
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,13 +19,13 @@ import { t } from '@/constants/translations';
 import { useEffect, useState } from 'react';
 
 interface LoadingOverlayProps {
-  isVisible: boolean;
-  progress: number; // 0-100
-  currentGeneration: string;
-  loadedPokemon: number;
-  totalPokemon: number;
-  currentGenPokemon: number;
-  totalGenPokemon: number;
+  isVisible?: boolean;
+  progress?: number; // 0-100
+  currentGeneration?: string;
+  loadedPokemon?: number;
+  totalPokemon?: number;
+  currentGenPokemon?: number;
+  totalGenPokemon?: number;
   onComplete?: () => void;
 }
 
@@ -62,16 +62,18 @@ const LOADING_TIPS = [
   'loading.tip4',
   'loading.tip5',
   'loading.tip6',
+  'loading.tip7',
+  'loading.tip8',
 ];
 
 export function LoadingOverlay({
-  isVisible,
-  progress,
-  currentGeneration,
-  loadedPokemon,
-  totalPokemon,
-  currentGenPokemon,
-  totalGenPokemon,
+  isVisible = true,
+  progress = 0,
+  currentGeneration = 'generation-i',
+  loadedPokemon = 0,
+  totalPokemon = 0,
+  currentGenPokemon = 0,
+  totalGenPokemon = 0,
 }: LoadingOverlayProps) {
   const { language, theme } = useAppStore();
   const isDark = theme === 'dark';
@@ -154,7 +156,7 @@ export function LoadingOverlay({
               >
                 <img
                   src="/logo.svg"
-                  alt="DASHDEX"
+                  alt="HYRULEDEX"
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -166,9 +168,9 @@ export function LoadingOverlay({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
               className="text-3xl font-black tracking-tight mb-2"
-              style={{ color: isDark ? '#ffffff' : '#1a1a2e' }}
+              style={{ color: isDark ? '#ffffff' : '#2C2416' }}
             >
-              DASH<span style={{ color: '#ff4d6d' }}>DEX</span>
+              HYRULE<span style={{ color: '#C6A15B' }}>DEX</span>
             </motion.h1>
 
             <motion.p

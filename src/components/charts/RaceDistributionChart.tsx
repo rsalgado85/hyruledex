@@ -1,12 +1,12 @@
 /**
- * Type Distribution Chart
+ * Race Distribution Chart
  * 
- * Pie/Donut chart showing the distribution of Pokémon types.
+ * Pie/Donut chart showing the distribution of character races.
  * Uses Chart.js via react-chartjs-2 for better performance with large datasets.
  * Features:
  * - Toggle show/hide values
- * - Click on segments to open modal with Pokémon list
- * - Type icons in legend and tooltip
+ * - Click on segments to open modal with character list
+ * - Race icons in legend and tooltip
  */
 
 import { useMemo, useState } from 'react';
@@ -17,24 +17,24 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { TYPE_COLORS } from '@/constants';
-import { PokemonListModal } from '@/components/common/PokemonListModal';
-import { useAllPokemon } from '@/hooks/usePokemon';
+import { RACE_COLORS } from '@/constants';
+import { CharacterListModal } from '@/components/common/CharacterListModal';
+import { useAllCharacters } from '@/hooks/useCharacters';
 import { getTypeIcon } from '@/constants/typeIcons';
 import type { TypeDistribution } from '@/types/pokemon';
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-interface TypeDistributionChartProps {
+interface RaceDistributionChartProps {
   data: TypeDistribution[];
   height?: number;
 }
 
-export function TypeDistributionChart({ data, height = 400 }: TypeDistributionChartProps) {
+export function RaceDistributionChart({ data, height = 400 }: RaceDistributionChartProps) {
   const [showValues, setShowValues] = useState(false);
   const [selectedType, setSelectedType] = useState<string | null>(null);
-  const { data: allPokemon } = useAllPokemon();
+  const { data: allPokemon } = useAllCharacters();
 
   const pokemonByType = useMemo(() => {
     if (!selectedType || !allPokemon) return [];
@@ -48,7 +48,7 @@ export function TypeDistributionChart({ data, height = 400 }: TypeDistributionCh
     datasets: [
       {
         data: data.map((d) => d.count),
-        backgroundColor: data.map((d) => TYPE_COLORS[d.name] || '#666'),
+        backgroundColor: data.map((d) => RACE_COLORS[d.name] || '#666'),
         borderColor: 'rgba(255, 255, 255, 0.1)',
         borderWidth: 2,
         hoverOffset: 10,
@@ -82,13 +82,13 @@ export function TypeDistributionChart({ data, height = 400 }: TypeDistributionCh
           label: (context: any) => {
             const item = data[context.dataIndex];
             const label = showValues
-              ? `${item.count} Pokémon (${item.percentage.toFixed(1)}%)`
-              : `${item.count} Pokémon`;
+              ? `${item.count} characters (${item.percentage.toFixed(1)}%)`
+              : `${item.count} characters`;
             return label;
           },
           labelTextColor: (context: any) => {
             const typeName = data[context.dataIndex]?.name;
-            return TYPE_COLORS[typeName] || '#fff';
+            return RACE_COLORS[typeName] || '#fff';
           },
         },
       },
@@ -114,11 +114,11 @@ export function TypeDistributionChart({ data, height = 400 }: TypeDistributionCh
         <Pie data={chartData} options={options as any} />
       </div>
 
-      {/* Custom Legend with Type Icons */}
+      {/* Custom Legend with Race Icons */}
       <div className="flex flex-wrap gap-1.5 justify-center px-2 pt-3 pb-1">
         {data.map((item) => {
           const TypeIcon = getTypeIcon(item.name);
-          const color = TYPE_COLORS[item.name] || '#666';
+          const color = RACE_COLORS[item.name] || '#666';
           return (
             <button
               key={item.name}
@@ -131,7 +131,7 @@ export function TypeDistributionChart({ data, height = 400 }: TypeDistributionCh
               }}
               onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = `${color}25`; }}
               onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = `${color}15`; }}
-              title={`Click to view ${item.name} type Pokémon`}
+              title={`Click to view ${item.name} race characters`}
             >
               <TypeIcon size={12} />
               <span>{item.name.charAt(0).toUpperCase() + item.name.slice(1)}</span>
@@ -141,11 +141,11 @@ export function TypeDistributionChart({ data, height = 400 }: TypeDistributionCh
         })}
       </div>
 
-      {/* Modal with Pokémon list for selected type */}
-      <PokemonListModal
+      {/* Modal with character list for selected race */}
+      <CharacterListModal
         isOpen={selectedType !== null}
         onClose={() => setSelectedType(null)}
-        title={`${selectedType ? selectedType.charAt(0).toUpperCase() + selectedType.slice(1) : ''} Type Pokémon`}
+        title={`${selectedType ? selectedType.charAt(0).toUpperCase() + selectedType.slice(1) : ''} Race Characters`}
         pokemon={pokemonByType}
       />
     </>
