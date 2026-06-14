@@ -152,10 +152,14 @@ function CharacterCard({
   character,
   index,
   language,
+  isExpanded,
+  onToggle,
 }: {
   character: CharacterData;
   index: number;
   language: 'en' | 'es';
+  isExpanded: boolean;
+  onToggle: () => void;
 }) {
   const { theme } = useAppStore();
   const isDark = theme === 'dark';
@@ -178,6 +182,7 @@ function CharacterCard({
         ease: 'easeOut',
       }}
       whileHover={{ y: -6, scale: 1.02 }}
+      onClick={onToggle}
       className="relative rounded-2xl overflow-hidden cursor-pointer group"
       style={{
         background: isDark
@@ -243,15 +248,25 @@ function CharacterCard({
           {character.name}
         </h3>
 
-        {/* Description */}
-        <p
-          className="text-xs leading-relaxed line-clamp-3"
-          style={{
-            color: isDark ? 'rgba(240, 236, 228, 0.55)' : 'rgba(26, 21, 16, 0.55)',
+        {/* Description — expandable on click */}
+        <motion.div
+          initial={false}
+          animate={{
+            height: isExpanded ? 'auto' : '3.6rem',
+            opacity: 1,
           }}
+          transition={{ duration: 0.35, ease: 'easeInOut' }}
+          className="overflow-hidden"
         >
-          {description}
-        </p>
+          <p
+            className="text-xs leading-relaxed"
+            style={{
+              color: isDark ? 'rgba(240, 236, 228, 0.55)' : 'rgba(26, 21, 16, 0.55)',
+            }}
+          >
+            {description}
+          </p>
+        </motion.div>
 
         {/* Bottom bar with id */}
         <div
@@ -265,12 +280,14 @@ function CharacterCard({
             #{String(character.id).padStart(2, '0')}
           </span>
 
-          {/* Animated arrow indicator on hover */}
+          {/* Toggle indicator */}
           <motion.span
-            className="text-[10px] font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            className="text-[10px] font-medium transition-opacity duration-300"
             style={{ color: raceColor }}
           >
-            {language === 'es' ? 'Ver detalles' : 'View details'} →
+            {isExpanded
+              ? language === 'es' ? 'Ver menos ↑' : 'Show less ↑'
+              : language === 'es' ? 'Ver más ↓' : 'Show more ↓'}
           </motion.span>
         </div>
       </div>
@@ -284,6 +301,7 @@ export function CharactersPage() {
   const { language, theme } = useAppStore();
   const isDark = theme === 'dark';
   const [search, setSearch] = useState('');
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const filteredCharacters = useMemo(() => {
     if (!search.trim()) return CHARACTERS;
@@ -483,6 +501,8 @@ export function CharactersPage() {
                 character={character}
                 index={index}
                 language={language}
+                isExpanded={expandedId === character.id}
+                onToggle={() => setExpandedId(expandedId === character.id ? null : character.id)}
               />
             ))}
           </motion.div>

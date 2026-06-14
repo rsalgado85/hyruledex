@@ -25,9 +25,9 @@ export function KPICard({ label, value, icon: Icon, subtitle, trend, trendValue,
       transition={{ duration: 0.3 }}
       aria-label={`${label}: ${value}`}
     >
-      {/* Era badge - positioned top-right */}
+      {/* Era badge - positioned top-right, hidden on smallest screens */}
       {pokemonId && (
-        <div className="absolute top-2 right-2 z-10">
+        <div className="absolute top-2 right-2 z-10 hidden sm:block">
           <EraBadge pokemonId={pokemonId} size="sm" />
         </div>
       )}

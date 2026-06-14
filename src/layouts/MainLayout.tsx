@@ -189,7 +189,9 @@ function MobileBottomNav() {
     >
       {MOBILE_NAV_ITEMS.map((item) => {
         const Icon = item.icon;
-        const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
+        const isActive = item.path === '/dashboard'
+          ? location.pathname === '/' || location.pathname === '/dashboard'
+          : location.pathname === item.path || location.pathname.startsWith(item.path + '/');
         return (
           <button
             key={item.path}
