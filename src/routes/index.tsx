@@ -11,6 +11,7 @@ const ItemsPage = lazy(() => import('@/pages/ItemsPage').then(m => ({ default: m
 const DungeonsPage = lazy(() => import('@/pages/HistoryPage').then(m => ({ default: m.HistoryPage })));
 const LorePage = lazy(() => import('@/pages/LorePage').then(m => ({ default: m.LorePage })));
 const ComparePage = lazy(() => import('@/pages/ComparePage').then(m => ({ default: m.ComparePage })));
+const CheatsPage = lazy(() => import('@/pages/CheatsPage').then(m => ({ default: m.CheatsPage })));
 const WeaponsPage = lazy(() => import('@/pages/WeaponsPage').then(m => ({ default: m.WeaponsPage })));
 const GamesPage = lazy(() => import('@/pages/VideogamesPage').then(m => ({ default: m.VideogamesPage })));
 const MapsPage = lazy(() => import('@/pages/MapsPage').then(m => ({ default: m.MapsPage })));
@@ -42,6 +43,7 @@ export const router = createBrowserRouter([
       { path: 'dungeons', element: <SuspenseWrapper><DungeonsPage /></SuspenseWrapper> },
       { path: 'lore', element: <SuspenseWrapper><LorePage /></SuspenseWrapper> },
       { path: 'compare', element: <SuspenseWrapper><ComparePage /></SuspenseWrapper> },
+      { path: 'cheats', element: <SuspenseWrapper><CheatsPage /></SuspenseWrapper> },
       { path: 'weapons', element: <SuspenseWrapper><WeaponsPage /></SuspenseWrapper> },
       { path: 'games', element: <SuspenseWrapper><GamesPage /></SuspenseWrapper> },
       { path: 'maps', element: <SuspenseWrapper><MapsPage /></SuspenseWrapper> },
