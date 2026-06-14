@@ -387,7 +387,7 @@ export function HistoryPage() {
                           {event.title}
                         </h3>
                         <p className="text-xs mt-0.5" style={{ color: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)' }}>
-                          {event.subtitle}
+                          {t(`history.game${index}.subtitle` as any, language)}
                         </p>
                       </div>
 
@@ -424,7 +424,7 @@ export function HistoryPage() {
                               className="text-sm leading-relaxed mt-4"
                               style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)' }}
                             >
-                              {event.description}
+                              {t(`history.game${index}.description` as any, language)}
                             </p>
 
                             {/* Fun Facts */}
@@ -440,7 +440,7 @@ export function HistoryPage() {
                                     style={{ color: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.45)' }}
                                   >
                                     <span style={{ color: event.color }}>✦</span>
-                                    {fact}
+                                    {t(`history.game${index}.fact${fi}` as any, language)}
                                   </li>
                                 ))}
                               </ul>
