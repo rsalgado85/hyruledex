@@ -1,194 +1,142 @@
-# DashDex - Pokémon Analytics Dashboard
+# HyruleDex — Compendio de The Legend of Zelda
 
-> A modern, professional Pokémon analytics dashboard built with React 19, TypeScript, and cutting-edge web technologies. Transform raw PokéAPI data into beautiful, interactive visualizations.
+> Un compendio interactivo del universo Zelda — personajes, jefes, armas, criaturas, mapas, videojuegos y más. Construido con React 19, TypeScript y la estética Triforce.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Version](https://img.shields.io/badge/version-2.0.0-gold)
 ![React](https://img.shields.io/badge/React-19-61DAFB)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-## 🚀 Features
-
-- **Dashboard** - Real-time KPIs and analytics overview
-- **Global Statistics** - Type distribution, height/weight histograms, base experience charts
-- **Pokémon Comparator** - Side-by-side stat comparison with radar charts
-- **Advanced Explorer** - Search, filter, and infinite scroll through all Pokémon
-- **Pokémon Detail** - Detailed view with stats, abilities, and artwork
-- **Rankings** - Top performers across all stat categories
-- **Insights** - Data-driven conclusions and type averages
-
-## 🛠️ Tech Stack
-
-| Technology | Purpose |
-|------------|---------|
-| React 19 | UI Framework |
-| TypeScript | Type Safety |
-| Vite | Build Tool |
-| React Router | Navigation |
-| TanStack Query | Server State & Caching |
-| Zustand | Client State Management |
-| Tailwind CSS | Styling |
-| Framer Motion | Animations |
-| Recharts | Data Visualization |
-| Axios | HTTP Client |
-| Lucide React | Icons |
-
-## 📁 Architecture
-
-```
-src/
-├── app/           # App configuration
-├── assets/        # Static assets
-├── components/    # Reusable components
-│   ├── common/    # Shared UI components
-│   ├── charts/    # Chart components
-│   ├── dashboard/ # Dashboard-specific
-│   └── pokemon/   # Pokémon-specific
-├── pages/         # Route pages
-├── hooks/         # Custom React hooks
-├── services/      # API services
-├── store/         # Zustand store
-├── routes/        # Route definitions
-├── layouts/       # Layout components
-├── utils/         # Utility functions
-├── cache/         # Cache management
-├── constants/     # Constants
-├── types/         # TypeScript types
-└── styles/        # Global styles
-```
-
-## 🏗️ Principles Applied
-
-- **SOLID** - Single responsibility, open/closed, Liskov substitution, interface segregation, dependency inversion
-- **DRY** - Don't Repeat Yourself
-- **KISS** - Keep It Simple, Stupid
-- **Separation of Concerns** - Clear boundaries between layers
-
-## 🚦 Getting Started
-
-### Prerequisites
-
-- Node.js 20+
-- npm 10+
-- Docker (optional, for containerized deployment)
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/dashdex.git
-cd dashdex
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
-### Build for Production
-
-```bash
-npm run build
-npm run preview
-```
-
-## 🐳 Docker Deployment
-
-### Using Docker Compose (Recommended)
-
-```bash
-# Build and start
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop
-docker-compose down
-```
-
-The application will be available at `http://localhost:3000`.
-
-### Using Docker Directly
-
-```bash
-# Build the image
-docker build -t dashdex .
-
-# Run the container
-docker run -d -p 3000:80 --name dashdex dashdex
-```
-
-## ▲ Vercel Deployment
-
-### Automatic (Recommended)
-
-1. Push your code to a GitHub repository
-2. Import the project in Vercel
-3. Vercel will automatically detect the Vite configuration
-4. Deploy!
-
-### Manual
-
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
-
-# Deploy to production
-vercel --prod
-```
-
-## ⚡ Performance
-
-- **TanStack Query** - 30-minute stale time, 24-hour cache
-- **LocalStorage Cache** - Multi-level caching with configurable TTL
-- **Lazy Loading** - Images and components loaded on demand
-- **Infinite Scroll** - Efficient data loading in Explorer
-- **Code Splitting** - Route-based code splitting
-
-## ♿ Accessibility
-
-- ARIA labels on all interactive elements
-- Keyboard navigation support
-- Semantic HTML structure
-- High contrast ratios
-- Screen reader friendly
-
-## 📊 Data Visualization
-
-All charts are built with Recharts and feature:
-
-- Interactive tooltips
-- Smooth animations
-- Responsive design
-- Custom theming
-- Hover states
-
-## 🔒 Security
-
-- Content Security Policy headers
-- XSS protection
-- Secure HTTP headers (via nginx/Vercel)
-- No sensitive data exposure
-
-## 📝 License
-
-MIT License - see [LICENSE](LICENSE) file for details.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+🔗 **[hyruledex.vercel.app](https://hyruledex.vercel.app)**
 
 ---
 
-Built with ❤️ using React + TypeScript
+## 🛡️ Módulos
+
+| Módulo | Descripción |
+|--------|-------------|
+| **Dashboard** | Vista principal con personajes destacados, jefes aleatorios, KPIs y modales de detalle |
+| **Personajes** | 21 personajes (Link, Zelda, Ganondorf, campeones, sabios…) con filtro por raza y estadísticas |
+| **Jefes** | 27 jefes finales y de mazmorra — stats, dificultad, dungeon de origen |
+| **Armas** | 43 ítems: espadas, escudos, arcos, armaduras y objetos — barras ATK/DEF animadas |
+| **Criaturas** | Bestiario del Compendio de Hyrule vía API — criaturas y monstruos con detalle emergente |
+| **Objetos** | Objetos clásicos de la saga |
+| **Mapas** | Mapas interactivos de Hyrule |
+| **Favoritos** | Guarda personajes, jefes y criaturas favoritos |
+| **Comparador** | Comparación lado a lado de personajes |
+| **Línea de tiempo** | 14 juegos con historia, subtítulos y curiosidades (EN/ES) |
+| **Trucos** | 90 trucos, secretos, glitches y easter eggs en 9 juegos |
+| **Videojuegos** | 195+ juegos de Zelda vía RAWG API con búsqueda y paginación |
+| **Lore** | Historia y trasfondo del universo Zelda |
+
+---
+
+## 🎨 Diseño
+
+- **Tema oscuro Triforce** — dorado `#C6A15B`, verde `#3E6B48`, fondos glassmorphism
+- **Navegación inferior móvil** con iconos y barra lateral completa en desktop
+- **Bilingüe** — español e inglés en todos los módulos
+- **Animaciones** — Framer Motion con `whileInView`, barras de stats animadas, modales con `AnimatePresence`
+- **Filtro por raza** — pills clickeables que filtran personajes en tiempo real
+- **Imágenes locales** — renders oficiales de pidgi.net, zeldawiki.wiki y Spriters Resource
+
+---
+
+## 🛠️ Stack Tecnológico
+
+| Tecnología | Uso |
+|------------|-----|
+| React 19 | UI |
+| TypeScript | Tipado |
+| Vite | Build |
+| React Router v7 | Navegación SPA |
+| Zustand | Estado global (tema, idioma, favoritos) |
+| Tailwind CSS v4 | Estilos |
+| Framer Motion | Animaciones |
+| Lucide React | Iconografía |
+
+---
+
+## 📁 Estructura
+
+```
+src/
+├── app/              # Configuración de la app
+├── components/       # Componentes reutilizables
+│   ├── common/       # Sidebar, MobileBottomNav, KPICard, SearchBar…
+│   └── layout/       # Layout principal
+├── pages/            # 19 páginas (Dashboard, Characters, Bosses, Weapons…)
+├── store/            # Zustand (useAppStore)
+├── constants/        # Colores de raza, traducciones, config
+├── hooks/            # Hooks personalizados
+├── services/         # Clientes API (Hyrule Compendium, RAWG)
+├── types/            # Tipos TypeScript
+└── styles/           # Estilos globales y tema Triforce
+```
+
+---
+
+## 🚀 Desarrollo
+
+### Requisitos
+
+- Node.js 20+
+- npm 10+
+
+### Instalación
+
+```bash
+git clone https://github.com/rsalgado85/hyruledex.git
+cd hyruledex
+npm install
+npm run dev
+```
+
+### Build
+
+```bash
+npm run build    # TypeScript + Vite
+npm run preview  # Previsualizar build
+```
+
+---
+
+## ▲ Deploy en Vercel
+
+El proyecto se despliega automáticamente en Vercel al pushear a `main`.
+
+```bash
+git push origin main
+```
+
+Producción: **[hyruledex.vercel.app](https://hyruledex.vercel.app)**
+
+---
+
+## 🌐 APIs utilizadas
+
+- **[Hyrule Compendium API](https://api.hyrule-compendium.com/)** — criaturas y monstruos
+- **[RAWG API](https://rawg.io/apidocs)** — catálogo de videojuegos de Zelda
+
+---
+
+## 🗂️ Assets
+
+Todas las imágenes son locales en `/public/`:
+
+| Carpeta | Contenido |
+|---------|-----------|
+| `public/characters/` | 21 personajes (PNG, fondo transparente) |
+| `public/bosses/` | 27 jefes |
+| `public/weapons/` | 43 ítems (espadas, escudos, arcos, armaduras) |
+| `public/creatures/` | Criaturas del compendio |
+
+---
+
+## 📝 Licencia
+
+MIT — [LICENSE](LICENSE)
+
+---
+
+Construido con ❤️ y la Trifuerza del Valor ⚔️
